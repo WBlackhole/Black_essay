@@ -1,0 +1,248 @@
+\documentclass[zihao=-4,a4paper]{ctexart}
+
+%===================   导言区    ================================================================
+% 加载字体相关宏包，支持设置英文字体和中文字体
+\usepackage{fontspec}       % fontspec 宏包用于设置 OpenType 或 TrueType 字体，适用于 XeLaTeX 或 LuaLaTeX
+\usepackage{xeCJK}          % xeCJK 宏包用于支持中文字体设置和排版
+
+% 设置中文字体和主字体
+\newcommand{\zhongsong}{\CJKfontspec{华文中宋}}  % 定义 \zhongsong 命令，使用华文中宋字体用于中文部分
+\setmainfont{Times New Roman}                    % 设置主字体为 Times New Roman，适用于英文部分
+
+% 数学相关
+\usepackage{amsmath}    % AMS LaTeX 数学公式增强（align, cases, split 等）
+\usepackage{amsthm}     % 定理环境（theorem, lemma, corollary）
+\usepackage{amsfonts}   % 数学字体（\mathbb, \mathfrak）
+\usepackage{mathrsfs}   % 额外的花体数学符号（\mathscr）
+\usepackage{bm}         % 加粗数学符号（\bm）
+\newtheorem{example}{例}              % 创建一个新的定理环境，命名为 "example"，并设置标题为 "例"（整体编号）
+\newtheorem{theorem}{定理}            % 创建一个新的定理环境，命名为 "theorem"，并设置标题为 "定理"（按章节编号）
+\newtheorem{definition}{定义}         % 创建一个新的定理环境，命名为 "definition"，并设置标题为 "定义"
+\newtheorem{axiom}{公理}              % 创建一个新的定理环境，命名为 "axiom"，并设置标题为 "公理"
+\newtheorem{property}{性质}           % 创建一个新的定理环境，命名为 "property"，并设置标题为 "性质"
+\newtheorem{proposition}{命题}        % 创建一个新的定理环境，命名为 "proposition"，并设置标题为 "命题"
+\newtheorem{lemma}{引理}              % 创建一个新的定理环境，命名为 "lemma"，并设置标题为 "引理"
+\newtheorem{corollary}{推论}          % 创建一个新的定理环境，命名为 "corollary"，并设置标题为 "推论"
+\newtheorem{remark}{注解}             % 创建一个新的定理环境，命名为 "remark"，并设置标题为 "注解"
+\newtheorem{condition}{条件}          % 创建一个新的定理环境，命名为 "condition"，并设置标题为 "条件"
+\newtheorem{conclusion}{结论}         % 创建一个新的定理环境，命名为 "conclusion"，并设置标题为 "结论"
+\newtheorem{assumption}{假设}         % 创建一个新的定理环境，命名为 "assumption"，并设置标题为 "假设"
+
+% 文字边框
+\usepackage[style=1]{mdframed}   % 带边框的文字块
+
+% 列表格式控制
+\usepackage{enumitem}            % 自定义有序列表格式（如 (1)、(2)、(3)）
+
+% 参考文献格式
+\usepackage{gbt7714}             % 配置 GB/T 7714（中国国家标准）参考文献格式
+\usepackage[superscript]{cite}   % 让引用变成上标
+
+% 附录管理（自动编号附录，并在目录中显示）
+\usepackage[toc,page]{appendix}
+
+% 图表相关
+\usepackage{booktabs}                % 三线表（上粗中细下粗）
+\usepackage{diagbox}                 % 分类表头（对角线表头）
+\usepackage{longtable}               % 长表格支持（允许表格跨页）
+\usepackage{multirow}                % 加载 multirow 宏包，支持在表格中合并多行
+\usepackage{float}                   % 控制图片浮动位置（H 选项可强制固定）
+\usepackage{subfigure}               % 加载 subfigure 宏包，用于在同一行中插入多个子图
+\usepackage{graphicx}                % 加载 graphicx 宏包，支持插入和缩放图像，常用于嵌入png、jpg等格式的图像
+\usepackage{caption}                 % 加载 caption 宏包，用于自定义图表的标题和格式
+\usepackage{color,xcolor}            % 加载 color 和 xcolor 宏包，支持文本、背景、框等内容的彩色设置
+\captionsetup{labelsep=quad}         % 设置图形标题中标签和标题之间的分隔符为 "quad"（相当于一个空格宽度）
+\renewcommand{\thesubfigure}{(\arabic{subfigure})}  % 重新定义子图编号的格式，使用圆括号括住阿拉伯数字编号
+
+% 脚注等符号相关
+\usepackage{pifont}                   % 提供 Dingbat 符号，包括带圈数字（①②③…）
+\usepackage[symbol*,stable]{footmisc} % 增强脚注功能，支持符号脚注
+\DefineFNsymbols{circled}{            %自定义带圈数字作为脚注符号
+  {\ding{192}}  % ①
+  {\ding{193}}  % ②
+  {\ding{194}}  % ③
+  {\ding{195}}  % ④
+  {\ding{196}}  % ⑤
+  {\ding{197}}  % ⑥
+  {\ding{198}}  % ⑦
+  {\ding{199}}  % ⑧
+  {\ding{200}}  % ⑨
+  {\ding{201}}  % ⑩
+}
+\setfnsymbol{circled}                 % 让脚注默认使用带圈数字
+\usepackage{wasysym}                  % 提供额外的符号（例如圆圈符号、勾号等）
+
+% 设置公式、表格和图形的编号规则，使其包含章节号
+\numberwithin{equation}{section}  % 使公式编号以章节号为前缀（例如：1.1，2.3）
+\numberwithin{table}{section}     % 使表格编号以章节号为前缀（例如：1.1，2.3）
+\numberwithin{figure}{section}    % 使图形编号以章节号为前缀（例如：1.1，2.3）
+
+% 页边距调整（提高排版美观）
+\usepackage{geometry}
+\geometry{top=2.5cm,bottom=2cm,left=2.5cm,right=2cm}
+
+% 页眉页脚设置
+\usepackage{fancyhdr}          % 加载 fancyhdr 宏包，用于自定义页眉和页脚
+\pagestyle{fancy}              % 启用 fancyhdr 宏包的自定义样式
+\fancyhf{}                     % 清空页眉和页脚的默认内容
+\fancyhead[C]{\zihao{5}  \songti 武汉理工大学毕业设计} % 设置页眉内容：宋体5号居中
+\fancyfoot[C]{~\zihao{5} \thepage~}                           % 设置页脚内容：页码居中
+\renewcommand{\headrulewidth}{0.65pt}                         % 设置页眉下方的横线宽度为0.65pt
+
+\usepackage{titlesec}
+\setlength{\baselineskip}{20pt}  % 设置段落的行距为 20 磅
+
+% 设置标题的段前、段后间距
+\titlespacing{\chapter}{0pt}{0.5\baselineskip}{0.5\baselineskip}  % 章标题
+\titlespacing{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}  % 节标题
+\titlespacing{\subsection}{0pt}{0.6\baselineskip}{0.5\baselineskip}  % 小节标题
+
+% 章节标题格式设置
+\ctexset{
+    section = {                                         % 章节标题设置
+        format = \centering\bfseries\zihao{-2} \heiti,  % 章节标题居中，使用黑体小二号
+        name = {第, 章}                                 % 章节标题格式为“第X章”
+    },
+    subsection = {                                      % 小节标题设置
+        format = \bfseries\zihao{3} \heiti          % 小节标题使用黑体三号
+    },
+    subsubsection = {                                   % 子小节标题设置
+        format = \bfseries\zihao{4} \heiti          % 子小节标题使用黑体四号
+    }
+}
+
+% 链接相关
+\usepackage{hyperref}     % 加载 hyperref 宏包，支持文档中的交叉引用和超链接（如点击跳转）
+\hypersetup{              % 设置链接颜色为黑色
+	colorlinks=true,
+	linkcolor=black,
+	filecolor=black,      
+	urlcolor=black,
+	citecolor=black,
+}
+
+% 源代码和绘图相关
+\usepackage{listings}                % 加载 listings 宏包，用于在 LaTeX 文档中粘贴源代码并高亮显示
+\usepackage{tikz}                    % 加载 tikz 宏包，提供强大的图形绘制功能
+\usepackage{tikz-3dplot}             % 加载 tikz-3dplot 宏包，扩展 tikz 用于绘制三维图形
+\usetikzlibrary{shapes,arrows,positioning} % 加载 tikz 库，提供绘制形状、箭头、定位等功能
+\usepackage[ruled]{algorithm2e}      % 伪代码，支持 if-else、for 等结构
+
+% 重新定义文档元素的名称
+\renewcommand{\contentsname}{目 ~~ 录}      % 将目录部分的标题修改为 "目  录" 
+\renewcommand{\abstractname}{摘 ~~ 要}      % 将摘要部分的标题修改为 "摘  要"
+\renewcommand{\refname}{参考文献}           % 将参考文献部分的标题修改为 "参考文献"
+\renewcommand{\indexname}{索引}             % 将索引部分的标题修改为 "索引"
+\renewcommand{\figurename}{图}              % 将图形部分的标题修改为 "图"
+\renewcommand{\tablename}{表}               % 将表格部分的标题修改为 "表"
+\renewcommand{\appendixname}{附录}          % 将附录部分的标题修改为 "附录"
+\renewcommand{\proofname}{证明}             % 将证明部分的标题修改为 "证明"
+\renewcommand{\algorithmcfname}{算法}       % 将算法部分的标题修改为 "算法"
+%===================   结束导言   ===============================================================
+
+
+%===================   正文区    ================================================================
+\begin{document}
+
+%============== 封皮和前言 =================
+\input{body/cover}
+\pagestyle{empty}      % 封面页不显示页码
+\cleardoublepage       % 确保新页码从右页开始（书籍排版）
+\pagenumbering{Roman}  % 切换为罗马数字
+\setcounter{page}{1}   % 强制页码从Ⅰ开始
+\pagestyle{plain} 
+\include{毕业论文/body/abstract.tex}
+\pagestyle{empty}
+\tableofcontents 
+\thispagestyle{empty}
+
+%============== 论文正文   =================
+\pagestyle{fancy}
+\include{毕业论文/body/chapter1.tex}
+\include{毕业论文/body/chapter2.tex}
+\include{毕业论文/body/chapter3.tex}
+\include{毕业论文/body/chapter4.tex}
+\include{毕业论文/body/chapter5.tex}
+
+%============= 参考文献及附录 ===============
+\bibliographystyle{gbt7714-numerical}          % 使用GB/T 7714的数字型引用格式
+\addcontentsline{toc}{section}{参考文献}       % 将“参考文献”添加到目录中，并作为一个新的section
+\begin{thebibliography}{10}\itemsep=-1pt
+
+\bibitem{armato2011lung}
+S.~G. Armato, G.~McLennan, L.~Bidaut, M.~F. McNitt-Gray, C.~R. Meyer, A.~P.
+  Reeves, B.~Zhao, D.~R. Aberle, C.~I. Henschke, E.~A. Hoffman, et~al.
+\newblock The lung image database consortium (lidc) and image database resource
+  initiative (idri): a completed reference database of lung nodules on ct
+  scans.
+\newblock {\em Medical physics}, 38(2):915--931, 2011.
+
+\bibitem{drozdzal2016importance}
+M.~Drozdzal, E.~Vorontsov, G.~Chartrand, S.~Kadoury, and C.~Pal.
+\newblock The importance of skip connections in biomedical image segmentation.
+\newblock In {\em Deep Learning and Data Labeling for Medical Applications},
+  pages 179--187. Springer, 2016.
+
+\bibitem{fourure2017residual}
+D.~Fourure, R.~Emonet, E.~Fromont, D.~Muselet, A.~Tremeau, and C.~Wolf.
+\newblock Residual conv-deconv grid network for semantic segmentation.
+\newblock {\em arXiv preprint arXiv:1707.07958}, 2017.
+
+\bibitem{he2017mask}
+K.~He, G.~Gkioxari, P.~Doll{\'a}r, and R.~Girshick.
+\newblock Mask r-cnn.
+\newblock In {\em Computer Vision (ICCV), 2017 IEEE International Conference
+  on}, pages 2980--2988. IEEE, 2017.
+
+\bibitem{huang2017densely}
+G.~Huang, Z.~Liu, K.~Q. Weinberger, and L.~van~der Maaten.
+\newblock Densely connected convolutional networks.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, volume~1, page~3, 2017.
+
+\bibitem{lee2015deeply}
+C.-Y. Lee, S.~Xie, P.~Gallagher, Z.~Zhang, and Z.~Tu.
+\newblock Deeply-supervised nets.
+\newblock In {\em Artificial Intelligence and Statistics}, pages 562--570,
+  2015.
+
+\bibitem{li2017h}
+X.~Li, H.~Chen, X.~Qi, Q.~Dou, C.-W. Fu, and P.~A. Heng.
+\newblock H-denseunet: Hybrid densely connected unet for liver and liver tumor
+  segmentation from ct volumes.
+\newblock {\em arXiv preprint arXiv:1709.07330}, 2017.
+
+\bibitem{long2015fully}
+J.~Long, E.~Shelhamer, and T.~Darrell.
+\newblock Fully convolutional networks for semantic segmentation.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 3431--3440, 2015.
+
+\bibitem{ronneberger2015u}
+O.~Ronneberger, P.~Fischer, and T.~Brox.
+\newblock U-net: Convolutional networks for biomedical image segmentation.
+\newblock In {\em International Conference on Medical image computing and
+  computer-assisted intervention}, pages 234--241. Springer, 2015.
+
+\bibitem{tajbakhsh2016convolutional}
+N.~Tajbakhsh, J.~Y. Shin, S.~R. Gurudu, R.~T. Hurst, C.~B. Kendall, M.~B.
+  Gotway, and J.~Liang.
+\newblock Convolutional neural networks for medical image analysis: Full
+  training or fine tuning?
+\newblock {\em IEEE transactions on medical imaging}, 35(5):1299--1312, 2016.
+
+\bibitem{Zhou_2017_CVPR}
+Z.~Zhou, J.~Shin, L.~Zhang, S.~Gurudu, M.~Gotway, and J.~Liang.
+\newblock Fine-tuning convolutional neural networks for biomedical image
+  analysis: actively and incrementally.
+\newblock In {\em IEEE conference on computer vision and pattern recognition
+  (CVPR)}, pages 7340--7351, 2017.
+
+\end{thebibliography}
+
+\clearpage                                     % 插入分页符，保证参考文献后开始新的一页
+
+%=============  致谢  ======================
+\include{毕业论文/body/acknowledge.tex}
+%===================   结束正文    ===============================================================
+\end{document}
