@@ -151,18 +151,20 @@
 \pagenumbering{Roman}  % 切换为罗马数字
 \setcounter{page}{1}   % 强制页码从Ⅰ开始
 \pagestyle{plain} 
-\include{毕业论文/body/abstract.tex}
+\include{body/abstract}
 \pagestyle{empty}
 \tableofcontents 
 \thispagestyle{empty}
 
 %============== 论文正文   =================
 \pagestyle{fancy}
-\include{毕业论文/body/chapter1.tex}
-\include{毕业论文/body/chapter2.tex}
-\include{毕业论文/body/chapter3.tex}
-\include{毕业论文/body/chapter4.tex}
-\include{毕业论文/body/chapter5.tex}
+\include{body/chapter1.tex}
+\include{body/chapter2.tex}
+\include{body/chapter3.tex}
+\include{body/chapter4.tex}
+\include{body/chapter5.tex}
+\include{body/chapter6.tex}
+\include{body/chapter7.tex}
 
 %============= 参考文献及附录 ===============
 \bibliographystyle{gbt7714-numerical}          % 使用GB/T 7714的数字型引用格式
@@ -243,6 +245,6 @@ Z.~Zhou, J.~Shin, L.~Zhang, S.~Gurudu, M.~Gotway, and J.~Liang.
 \clearpage                                     % 插入分页符，保证参考文献后开始新的一页
 
 %=============  致谢  ======================
-\include{毕业论文/body/acknowledge.tex}
+\include{body/acknowledge.tex}
 %===================   结束正文    ===============================================================
 \end{document}
