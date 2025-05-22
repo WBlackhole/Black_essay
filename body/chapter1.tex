@@ -66,7 +66,7 @@
 \begin{table}[!htbp]
   \centering
   \caption{U-Net变体模型的国外改进策略对比}
-  \label{tab:multirow_example}
+  \label{tab:unet_var_en}
   \small
   \begin{tabularx}{\textwidth}{@{}C C C@{}}
     \toprule
@@ -109,6 +109,34 @@
 Wang W等人\cite{wang2021}结合3D CNN作为编码器，Transformer模块作为瓶颈捕捉局部-全局信息，这种设计增强了MRI等跨切片数据的语义建模能力。此外，Li等人\cite{li2021}将Group Transformer插入U-Net各层，通过交替卷积与多头自注意模块提高感受野，同时通过引入Fourier描述子孙是，提示边界模糊区域的分割能力。也有研究者彻底舍弃卷积神经网络作为编码器与解码器的主干模块，Cao等人\cite{cao2021}采用Swin Transformer作为U-Net网络的主干结构，搭配滑动窗口注意力，构建了纯Transformer网络，提升全局上下文捕捉能力。
 
 % 插入变体表
+\begin{table}[!htbp]
+  \centering
+  \caption{U-Net变体模型的国内改进策略对比}
+  \label{tab:unet_var_ch}
+  \small
+  \begin{tabularx}{\textwidth}{@{}C C C@{}}
+    \toprule
+    \textbf{U-Net变体类别}  
+      & \textbf{模型名称} 
+      & \textbf{核心改进} \\ 
+    \midrule
+    \multirow{3}{*}{跳跃连接改进} 
+      & U-Net3+ & 全尺度跳跃融合细粒特征 \\ \cmidrule(lr){2-3}
+      & Attention U-Net++ & 密集跳跃连接引入注意力筛选 \\ \cmidrule(lr){2-3}
+      & BiO-Net & 双向跳跃闭环语义反馈\\
+    \midrule
+    \multirow{4}{*}{混合Transformer} 
+      & TCU-Net & 采用残差块和Transformer双增强 \\ \cmidrule(lr){2-3}
+      &  & 采用3D残差块处理3D数据 \\ \cmidrule(lr){2-3}
+      & Group Trans-U-Net & 交替卷积与Group注意融合 \\ \cmidrule(lr){2-3}
+      & Swin-Unet & Swin Transformer替代卷积主干 \\  
+    \midrule
+    \multirow{2}{*}{轻量化设计} 
+      & MRUNet	& 两阶段协同进行轻量分割检测 \\ \cmidrule(lr){2-3}
+      & TinyU-Net & 级联感受野提升轻量表达力 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 Wang F等人\cite{Wang2023T}借鉴Mask R-CNN的思路提出了MRUNet模型，通过两阶段检测-分割协同和轻量化设计，显著提升了复杂农业场景下昆虫幼虫识别的准确率与稳定性，为农业AI应用提高了可靠解决方案。Chen等人\cite{chen2024}提出的TinyU-Net轻量化模型，专为资源受限环境下的医学图像自动分割任务而设计，通过一种级联的感受野扩展策略，在不同的通道间挖掘冗余信息，增强特征表达能力，同时有效控制计算成本和参数规模。
 
