@@ -5,20 +5,21 @@
 图像分割任务可以分为两个不同的任务类别：语义分割任务和实例分割任务\cite{azad2024}。语义分割是像素级图像分割，图像中的每个像素点都有一个对应的类别，语义分割任务则需要尽量正确预测每个像素点的类别。实例分割在语义分割任务的基础上，需要将同类别的像素分类为不同的对象实例，即同类不同例。基于医学图像的语义分割任务则是指利用计算机视觉技术去分析和处理2D或3D医学图像，达到将人体器官、软组织和病灶体进行分割、提取，三维重构和展示的目的\cite{liu2021}。
 
 % 附图：语义分割和实例分割
-\begin{figure}
+\begin{figure}[htbp]
     \centering
-    \begin{subfigure}{0.45\textwidth}
-        \includegraphics[width=\textwidth]{fig/semantic_seg.jpg}
-        \caption{(a)}
-        \label{fig:semantic_seg}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.45\textwidth}
-        \includegraphics[width=\textwidth]{fig/instance_seg.jpg}
-        \caption{(b)}
-        \label{fig:instance_seg}
-    \end{subfigure}
-    \caption{实例分割与巴拉巴拉\cite{kirillov2019}}
+    \subfloat[(a)原图]
+    {
+        \includegraphics[width=0.25\textwidth]{fig/img_seg.jpg}
+    }
+    \subfloat[(b)语义分割图]
+    {
+        \includegraphics[width=0.25\textwidth]{fig/semantic_seg.jpg}
+    }
+    \subfloat[(c)实例分割图]
+    {
+        \includegraphics[width=0.25\textwidth]{fig/semantic_seg.jpg}
+    }
+    \caption{实例\cite{kirillov2019}}
     \label{fig:seg}
 \end{figure}
 
