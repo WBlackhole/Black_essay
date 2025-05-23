@@ -138,13 +138,21 @@ Prewitt算子与Sobel算子均采用像素邻域差分法进行边缘检测。�
 
 \subsubsection{卷积神经网络}
 
+% 章节脉络：
+% 介绍卷积神经网络 -> 介绍FCN模型 -> FCN的成功和局限
+% 1.介绍卷积神经网络：历史及基本介绍 -> 技术细节 -> CNN如何正式引入图像分割领域
+% 2.介绍FCN模型： 模型架构 -> 如何完成语义分割
+% 3.成功和局限： 成功在哪 -> 局限在哪
+
+% 1.1
 卷积神经网络是深度学习与图像处理技术相结合的经典网络结构，作为深度学习技术领域最具代表性的神经网络之一，在图像分析与处理领域取得了诸多突破性进展。例如，在学术界广泛使用的标准图像标注集ImageNet上，基于卷积神经网络的特征提取与分类、模式识别等研究成果颇为丰硕。
 
 受生物学上HUbel等人\cite{hubel1962}提出的感受野的概念启发，1980年Fukushima\cite{fukushima1980}提出了神经认知机，被视为卷积神经网络的首次实现网络。与全连接层前馈网络不同的是，卷积神经网络通过交叉堆叠卷积层、池化层和全连接层形成前馈神经网络。大量的卷积层和池化层使得网络可以共享前层网络不同位置的特征映射权重，并利用空间相对关系来大大减少网络的参数量，这与大脑视觉神经元只能对视网膜上某一特定区域的光刺激产生反应的机制类似。同时，结构特性带来的一定程度上的平移、缩放和旋转不变性，使得卷积神经网络在图像和视频分析任务上具有远超其他神经网络模型的准确率。
 
+% 1.2
 如图~\ref{fig:cnn}所示，卷积层是卷积神经网络的核心组成部分，通常从前至后依次包含：若干个卷积核、非线性激活函数。所有卷积核对输入数据进行并行卷积运算得到线性输出，之后经过激活函数就得到了卷积层的输出\cite{Goodfellow-et-al-2016}。
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/cnn_frame.png}
     \caption{卷积网络的整体结构}
@@ -157,47 +165,56 @@ Prewitt算子与Sobel算子均采用像素邻域差分法进行边缘检测。�
     O(i, j)=(I * K)(i, j)=\sum_{m} \sum_{n} I(m, n) K(i-m, j-n)
 \]
 
-其中$*$表示二维卷积运算，如图~\ref{fig:2dcnn}所示。$I$和$K$都是二维张量，$ K \in \mathbb{R}$表示二维卷积核，$I \in \mathbb{R}$表示输入的二维图像数据，$(x, y)$代表像素点坐标，$(m，n)$代表输入图像的尺寸。
+其中$*$表示二维卷积运算，如图~\ref{fig:2dcnn}所示。$I$和$K$都是二维张量，$ K \in \mathbb{R}$表示可学习的二维卷积核权重向量，$I \in \mathbb{R}$表示输入的二维图像数据，$(x, y)$代表像素点坐标，$(m, n)$代表输入图像的尺寸。
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{fig/2dcnn-1.png}
+    \includegraphics[width=0.7\textwidth]{fig/2dcnn-1.png}
     \caption{二维卷积运算}
     \label{fig:2dcnn}
 \end{figure}
 
-其中卷积核$ \boldsymbol{w}^{(l)} \in \mathbb{R}^{K} $为可学习的权重向量，$b^{(l)} \in \mathbb{R}$为可学习的偏置\cite{qiu2020nndl}。
+% 2.1
+在全卷积网络（Fully Convolution Network， FCN）出现之前，诸如GoogLeNet、ResNet等采用卷积神经网络构建的模型主要应用于图像分类和识别，在图像语义分割领域缺乏有针对性的、表现优异的卷积神经网络模型，而FCN是首个开创性将卷积神经网络引入图像语义分割领域的网络模型\cite{shelhamer2016}。
 
-在全卷积网络出现之前，诸如GoogLeNet、ResNet等采用卷积神经网络构建的模型主要应用于图像分类和识别，在图像语义分割领域缺乏有针对性的、表现优异的卷积神经网络模型，而全卷积网络\cite{shelhamer2016}（Fully Convolution Network,FCN）是首个开创性将卷积神经网络引入图像语义分割领域的网络模型。如图~\ref{fig:fcn_frame}所示，作为后续诸多分割模型模型的基础架构，FCN借鉴了VGG网络的层次化设计，可以支持任意尺寸的输入图像。同时通过采用全卷积层结构取代传统分割模型中的全连接层，解决了全连接层会破坏空间信息导致整体性能下降的问题。
+如图~\ref{fig:fcn_frame}所示，作为后续诸多分割模型模型的基础架构，FCN借鉴了VGG网络的层次化设计，可以支持任意尺寸的输入图像，采用逐像素交叉熵损失进行反向传播，整个网络端到端训练输出与输入同尺寸的逐像素类别图。
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/fcn_frame.png}
-    \caption{全卷积网络模型示意图}
+    \caption{全卷积网络模型架构}
     \label{fig:fcn_frame}
 \end{figure}
 
-如图~\ref{fig:fcn_pre}所示，FCN网络的分割结果仍存在边界模糊、细节丢失等局限性，对图像细微结构的敏感性不足，这个问题在要求分割精度的医学图像语义分割任务上显得尤为突出，甚至将导致网络几乎无法处理小目标与精细目标。
+% 2.2
+与传统分割模型和卷积神经网络通过若干个全连接层得到一个全局类别标签不同的是，FCN中的全连接层被全部替换为了卷积层，并通过可学习的转置卷积（上采样）层将低分辨率特征图恢复到原分辨率完成图像语义分割。
+
+% 3.1 + 3.2
+FCN模型是语义分割领域的里程碑并开启了“全卷积”时代，后续的SegNet、Deeplab和U-Net等模型皆在此框架上演进。全卷积的架构不仅解决了全连接层会破坏空间信息导致模型整体性能下降的问题，还打破了输入尺寸的限制，使大面积图像一次向前即可完成推理。然而，如图~\ref{fig:fcn_pre}所示，由于过深的卷积下采样，这使得FCN网络的分割结果存在边界粗糙、细节丢失等问题，虽然Long等人尝试通过跳跃连接的方式，将卷积层下采样的结果与上采样的结果进行特征融合以缓解问题，但对医学图像分割这种图像包含小器官小目标且要求分割高精度的任务，FCN网络的分割结果还远远无法满足要求。
 
 \begin{figure}[htbp]
     \centering
     \subfloat[原图]
     {
-        \includegraphics[width=0.3\textwidth]{fig/img4.png}
+        \includegraphics[width=0.2\textwidth]{fig/img4.png}
     }
     \subfloat[原图分割图]
     {
-        \includegraphics[width=0.3\textwidth]{fig/gt4.png}
+        \includegraphics[width=0.2\textwidth]{fig/gt4.png}
     }
     \subfloat[FCN预测分割图]
     {
-        \includegraphics[width=0.3\textwidth]{fig/predsf4.png}
+        \includegraphics[width=0.2\textwidth]{fig/predsf4.png}
     }
     \caption{原图分割图与FCN预测分割图的差别\cite{shelhamer2016}}
     \label{fig:fcn_pre}
 \end{figure}
 
 \subsubsection{U-Net网络}
+% 章节脉络：
+% Unet的核心设计
+% Unet的医学分割优势
+% Unet的局限性
 
 
 \subsection{模型评估指标}
