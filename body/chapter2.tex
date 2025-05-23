@@ -2,24 +2,23 @@
 
 \subsection{医学图像语义分割基础}
 
-图像分割任务可以分为两个不同的任务类别：语义分割任务和实例分割任务\cite{azad2024}。语义分割是像素级图像分割，图像中的每个像素点都有一个对应的类别，语义分割任务则需要尽量正确预测每个像素点的类别。实例分割在语义分割任务的基础上，需要将同类别的像素分类为不同的对象实例，即同类不同例。基于医学图像的语义分割任务则是指利用计算机视觉技术去分析和处理2D或3D医学图像，达到将人体器官、软组织和病灶体进行分割、提取，三维重构和展示的目的\cite{liu2021}。
+图像分割任务可以分为两个不同的任务类别：语义分割任务和实例分割任务\cite{azad2024}。语义分割是像素级图像分割，图像中的每个像素点都有一个对应的类别，语义分割任务则需要尽量正确预测每个像素点的类别。实例分割在语义分割任务的基础上，需要将同类别的像素分类为不同的对象实例，即同类不同例，如图~\ref{fig:seg}所示。基于医学图像的语义分割任务则是指利用计算机视觉技术去分析和处理2D或3D医学图像，达到将人体器官、软组织和病灶体进行分割、提取，三维重构和展示的目的\cite{liu2021}。
 
-% 附图：语义分割和实例分割
 \begin{figure}[htbp]
     \centering
-    \subfloat[(a)原图]
+    \subfloat[原图]
     {
-        \includegraphics[width=0.25\textwidth]{fig/img_seg.jpg}
+        \includegraphics[width=0.3\textwidth]{fig/img_seg.jpg}
     }
-    \subfloat[(b)语义分割图]
+    \subfloat[语义分割图]
     {
-        \includegraphics[width=0.25\textwidth]{fig/semantic_seg.jpg}
+        \includegraphics[width=0.3\textwidth]{fig/semantic_seg.jpg}
     }
-    \subfloat[(c)实例分割图]
+    \subfloat[实例分割图]
     {
-        \includegraphics[width=0.25\textwidth]{fig/semantic_seg.jpg}
+        \includegraphics[width=0.3\textwidth]{fig/instance_seg.jpg}
     }
-    \caption{实例\cite{kirillov2019}}
+    \caption{语义分割与实例分割对比示意图\cite{kirillov2019}}
     \label{fig:seg}
 \end{figure}
 
@@ -56,6 +55,8 @@
 综上，面向于医学图像的语义分割算法和模型不仅有高分割精度和跨模态泛化的能力要求，还需要面对高实时性等的性能挑战。这种挑战也促使了大量的研究者进入医学图像语义分割领域进行探索，提出了诸多有效的分割算法和创新的网络结构与优化策略，这些工作将在下文中进行全面的介绍。
 
 \subsection{传统分割方法概述}
+
+% 结合医学图像中的应用阐述适用性和局限性，同时：删减内容！删减内容！
 
 在相当长的一段时间内，基于边界或区域的传统分割技术作为医学图像分析的基础，提供了一系列复杂性和适用性有所不同的方法。基于区域的分割方法依赖图像的空间特征，例如灰度和纹理。基于边界的分割方法则主要使用梯度信息来确定目标的边界。包括阈值分割、边缘检测、区域生长及聚类分割等在内的传统分割方法在很多场合下已被证明有效\cite{xu2024}，但在跨模态、跨患者场景中传统方法存在较大的局限性（详见第一章1.1节）。接下来的内容将对阈值分割、边缘检测和聚类分割这三种最具代表性且广泛应用的传统分割方法进行概述总结。
 
@@ -141,7 +142,7 @@ Prewitt算子与Sobel算子均采用像素邻域差分法进行边缘检测。�
 
 1962年Hubel等人\cite{hubel1962}通过生物学研究表明，大脑中视觉信息从视网膜传递是通过多级感受野激发完成的，并首次提出了感受野概念。基于感受野概念，1980年Fukushima\cite{fukushima1980}提出了神经认知机，被视为卷积神经网络的首次实现网络。与全连接层前馈网络不同的是，卷积神经网络通过交叉堆叠卷积层、池化层和全连接层形成前馈神经网络。大量的卷积层和池化层使得网络可以共享前层网络不同位置的特征映射权重，并利用空间相对关系来大大减少网络的参数量。同时，结构特性带来的一定程度上的平移、缩放和旋转不变性，使得卷积神经网络在图像和视频分析任务上具有远超其他神经网络模型的准确率\cite{qiu2020nndl}。
 
-卷积神经网络通过卷积核（Convolution Kernel）对输入数据完成卷积操作，在图像处理中最常见的卷积操作是二维卷积：
+卷积神经网络通过卷积核（Convolution Kernel）对输入数据完成卷积操作，采用卷积代替全连接反馈网络的全连接，就构成了卷积神经网络的卷积层。在图像处理中最常见的卷积操作是二维卷积：
 
 \begin{equation}
     \boldsymbol{O}=\boldsymbol{K} * \boldsymbol{I}
@@ -149,12 +150,20 @@ Prewitt算子与Sobel算子均采用像素邻域差分法进行边缘检测。�
 
 其中$*$表示二维卷积运算，如图~\ref{fig:2dcnn}所示。$I$和$K$都是二维张量，$K$表示二维卷积核，$I$表示输入的二维图像数据。
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/2dcnn-1.png}
     \caption{二维卷积运算}
     \label{fig:2dcnn}
 \end{figure}
+
+对于一个有$l$层卷积层的卷积神经网络，第$l$层的输出$\boldsymbol{o}^{(l)}$为第$l-1$层的输出活性值$\boldsymbol{a^{(l-1)}}$和卷积核$\boldsymbol{w^{(l)}}$的卷积：
+
+\begin{equation}
+    \boldsymbol{o}^{(l)}=\boldsymbol{w}^{(l)} \otimes \boldsymbol{a}^{(l-1)}+b^{(l)}
+\end{equation}
+
+其中卷积核$ \boldsymbol{w}^{(l)} \in \mathbb{R}^{K} $为可学习的权重向量，$b^{(l)} \in \mathbb{R}$为可学习的偏置\cite{qiu2020nndl}。
 
 \subsubsection{U-Net网络}
 
