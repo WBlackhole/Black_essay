@@ -65,11 +65,11 @@ BraTS 2020数据集的主要挑战包括：（1）肿瘤组织的高度异质性
 
 解码端采用与编码端对称的结构，对最深层特征进行转置卷积上采样，并与对应级别的编码器输出进行特征级串接后，执行两层卷积＋激活以还原局部细节。此跳跃连接在保持全局上下文同时弥补高分辨率细节缺失，是U-Net能够兼顾定位精度与类别判别力的关键机制。最终输出层采用1×1卷积，将通道数映射为$C$（$C$为分割图的像素类别数），输出未经激活直接送入损失函数计算，以便在训练阶段灵活选择Sigmoid或Softmax型损失。
 
-\begin{figure}
+\begin{figure}(htbp)
     \centering
-    \includegraphics[width=\textwidth]{fig/Unet_ushape.png}
+    \includegraphics[width=0.6\textwidth]{fig/Unet_ushape.png}
     \caption{fig:unet_ushape}
-    \label{fig:unet_ushape}
+    \label{基准U-Net模型的模型架构}
 \end{figure}
 
 上述网络拓扑及通道配置均采用Pytorch框架实现，对应的实现要点可在附录A中进一步查证。
@@ -108,7 +108,7 @@ BraTS 2020数据集的主要挑战包括：（1）肿瘤组织的高度异质性
 
 \subsubsection{评估指标}
 
-在医学图像分割研究中，模型输出通常为与输入图像同尺寸的二值概率图，衡量其与专家标注掩膜之间的相似程度是评价算法优劣的关键。单一指标无法满足同时反映检测率、误诊率和重叠精度的要求，多指标可立体呈现模型表现。因此，在本研究中，我们以混淆矩阵四要素——真阳性(TP)、真阴性(TN)、假阳性(FP)、假阴性(FN)——为基础，记录Accuracy、Precision、Recall、Specificity、F1-Score、Dice系数与Jaccard指数七项指标。下面逐一给出指标定义、公式及其评价意义。
+在医学图像分割研究中，模型输出通常为与输入图像同尺寸的二值概率图，衡量其与专家标注掩膜之间的相似程度是评价算法优劣的关键。单一指标无法满足同时反映检测率、误诊率和重叠精度的要求，多指标可立体呈现模型表现。因此，在本研究中，我们以混淆矩阵四要素（真阳性TP、真阴性TN、假阳性FP、假阴性FN）为基础，记录Accuracy、Precision、Recall、Specificity、F1-Score、Dice系数与Jaccard指数七项评估指标。下面逐一给出这些指标的定义、公式及其评价意义。
 
 准确率Accuracy表示正确预测的样本占总样本的比例，是最直观的分类性能指标:
 
@@ -118,6 +118,16 @@ BraTS 2020数据集的主要挑战包括：（1）肿瘤组织的高度异质性
 
 Accuracy直观反映模型的综合判断能力，但在病灶面积远小于背景时，Accuracy易受TN主导，可能高估模型质量，因此仅作为参考基线。
 
+特异性Specificity表示实际为负类的样本中被正确预测的比例，衡量模型识别阴性样本的能力：
+
+\begin{equation}
+    \mathrm{Specificity}=\frac{T N}{T N+F P}
+\end{equation}
+
+在医学任务中，高特异性可减少健康组织被误判为病变的风险（如避免正常脑组织被误分割为肿瘤），提升结果的可信度，与 Recall 形成互补。
+
+Jaccard指数（IoU）计算预测与真实标签的交集与并集的比值，是分割任务的经典指标：
+
 精确率Precision表示预测为正类的样本中实际为正类的比例，反映模型的预测可靠性：
 
 \begin{equation}
@@ -126,7 +136,15 @@ Accuracy直观反映模型的综合判断能力，但在病灶面积远小于背
 
 Precision反映模型整体预测正确性，但在类别极度不平衡时（如背景像素占比90\%以上），可能高估性能（例如模型仅预测背景即可获得高准确率），需结合其他指标综合判断。
 
-F1-Score是精确率（Precision）与召回率（Recall）的调和平均数，综合衡量模型在正类样本上的分类能力，尤其适用于类别不平衡场景：
+召回率Recall召回率表示实际为正类的样本中被正确预测的比例，反映模型对正类样本的覆盖能力：
+
+\begin{equation}
+    \mathrm{Recall}=\frac{T P}{T P+F N} 
+\end{equation}
+
+高召回率意味着模型能有效捕捉病变区域（减少漏检），在早期诊断（如癌症筛查）中至关重要，但需平衡精确率以避免过度预测。
+
+F1-Score是Precision与Recall的调和平均数，综合衡量模型在正类样本上的分类能力，尤其适用于类别不平衡场景：
 
 \begin{equation}
     \mathrm{F} 1=\frac{2 T P}{2 T P+F P+F N}=2 \cdot \frac{\text { Precision } \times \text { Recall }}{\text { Precision }+ \text { Recall }}
@@ -141,24 +159,6 @@ Dice系数衡量预测结果与真实标签的重叠程度，是医学图像分�
 \end{equation}
 
 其中，A为预测区域，B为真实区域。Dice系数直接衡量空间重叠，对不平衡数据敏感度低，能有效评估模型对病灶轮廓的捕捉精度，尤其适用于小目标分割任务（如脑肿瘤核心）。
-
-召回率Recall召回率表示实际为正类的样本中被正确预测的比例，反映模型对正类样本的覆盖能力：
-
-\begin{equation}
-   \mathrm{Recall}=\frac{T P}{T P+F N} 
-\end{equation}
-
-高召回率意味着模型能有效捕捉病变区域（减少漏检），在早期诊断（如癌症筛查）中至关重要，但需平衡精确率以避免过度预测。
-
-特异性Specificity表示实际为负类的样本中被正确预测的比例，衡量模型识别阴性样本的能力：
-
-\begin{equation}
-    \mathrm{Specificity}=\frac{T N}{T N+F P}
-\end{equation}
-
-在医学任务中，高特异性可减少健康组织被误判为病变的风险（如避免正常脑组织被误分割为肿瘤），提升结果的可信度，与 Recall 形成互补。
-
-Jaccard指数（IoU）计算预测与真实标签的交集与并集的比值，是分割任务的经典指标：
 
 \begin{equation}
     \mathrm{Jaccard}=\frac{T P}{T P+F P+F N}=\frac{|A \cap B|}{|A \cup B|}
