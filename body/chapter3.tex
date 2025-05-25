@@ -9,23 +9,23 @@
     \centering
     \subfloat[皮肤镜图像（ISIC）]
     {
-        \includegraphics[width=0.3\textwidth,height=6cm]{fig/ISIC.png}
+        \includegraphics[width=0.3\textwidth,height=5cm]{fig/ISIC.png}
     }
     \hspace{0.3cm}
     \subfloat[肝脏CT影像（LiTS）]
     {
-        \includegraphics[width=0.3\textwidth,height=6cm]{fig/LiTS.png}
+        \includegraphics[width=0.3\textwidth,height=5cm]{fig/LiTS.png}
     }
     \hspace{0.3cm}
     \subfloat[脑部MRI图像（BraTS）]
     {
-        \includegraphics[width=0.3\textwidth,height=6cm]{fig/brain.pdf}
+        \includegraphics[width=0.3\textwidth,height=5cm]{fig/brain.pdf}
     }
     \caption{ISIC、LiTS与BraTS数据集中的典型样本图像}
     \label{fig:dataset}
 \end{figure}
 
-\subsubsection{ISBI皮肤镜影像数据集}
+\subsubsection{ISIC皮肤镜影像数据集}
 
 ISIC皮肤镜影像数据集（2018年）由ISIC联合Memorial Sloan Kettering Cancer Center、University of Queensland等多家机构共同构建，并作为ISIC 2018皮肤病变识别挑战赛的官方数据资源\cite{codella2019skinlesionanalysismelanoma}。
 
@@ -37,7 +37,7 @@ LiTS（Liver Tumor Segmentation）数据集是由MICCAI 2017肝脏肿瘤分割�
 
 在标注方面，数据集中每一病例均由三位经验丰富的放射科专家进行独立标注，提供像素级肝脏与肿瘤分割掩膜。标注一致性通过Dice系数（平均大于0.92）和Hausdorff距离（平均小于5 mm）进行验证，部分病例还附带有病灶的病理学分型标签。
 
-LiTS 2017数据集存在一些区别于ISBI 2018数据集的挑战：其一，肝脏轮廓复杂、变异性大，且边界常与胃肠道等邻近脏器重叠，导致区域判别困难；其二，肿瘤病灶形态异质性强（如结节型、融合型、浸润型），并存在大小悬殊、边界模糊、低密度病灶等不利因素；此外，呼吸运动伪影与层间不连续性也显著增加了分割任务的难度。
+LiTS 2017数据集存在一些区别于ISIC 2018数据集的挑战：其一，肝脏轮廓复杂、变异性大，且边界常与胃肠道等邻近脏器重叠，导致区域判别困难；其二，肿瘤病灶形态异质性强（如结节型、融合型、浸润型），并存在大小悬殊、边界模糊、低密度病灶等不利因素；此外，呼吸运动伪影与层间不连续性也显著增加了分割任务的难度。
 
 \subsubsection{BraTS脑肿瘤MRI数据集}
 
@@ -56,9 +56,9 @@ BraTS 2020数据集的主要挑战包括：（1）肿瘤组织的高度异质性
 
 \subsection{跨数据集标准化数据预处理}
 
-为构建统一、可复现的医学图像分割数据管线，本文针对ISBI 2018、LiTS 2017及BraTS 2020三组数据集设计了标准化预处理框架。
+为构建统一、可复现的医学图像分割数据管线，本文针对ISIC 2018、LiTS 2017及BraTS 2020三组数据集设计了标准化预处理框架。
 
-所有图像数据均通过强度归一化消除跨模态差异：皮肤镜与MRI采用通道级归一化（各通道独立计算均值和方差），CT数据则通过HU值截断（LiTS限定为[-50, 400]）后线性映射至[0,1]范围，以抑制无关组织干扰。数据划分采用固定随机种子的分层抽样策略，按7:2:1比例分配训练集、验证集与测试集，分层依据包括病变类型（ISBI）、肿瘤体积（LiTS）及胶质瘤级别（BraTS），划分结果持久化为JSON文件以避免数据泄漏和恢复训练的依据。标签处理上，单通道掩膜统一转换为双通道one-hot编码（背景与前景概率），适配交叉熵与Dice损失函数。  
+所有图像数据均通过强度归一化消除跨模态差异：皮肤镜与MRI采用通道级归一化（各通道独立计算均值和方差），CT数据则通过HU值截断（LiTS限定为[-50, 400]）后线性映射至[0,1]范围，以抑制无关组织干扰。数据划分采用固定随机种子的分层抽样策略，按7:2:1比例分配训练集、验证集与测试集，分层依据包括病变类型（ISIC）、肿瘤体积（LiTS）及胶质瘤级别（BraTS），划分结果持久化为JSON文件以避免数据泄漏和恢复训练的依据。标签处理上，单通道掩膜统一转换为双通道one-hot编码（背景与前景概率），适配交叉熵与Dice损失函数。  
 
 此外，有研究表明对于脑肿瘤语义分割任务，FLAIR和T1ce这两种模态组合作为输入序列是最佳的组合选择\cite{buchner2023}。因此，针对BraTS 2020数据集，本研究仅采用FLAIR和T1ce两种模态作为输入序列，同时剔除无标注信息的空白切片以缓解类别极端不平衡问题。
 
