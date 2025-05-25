@@ -16,7 +16,31 @@
 
 \subsubsection{基准模型性能验证}
 
-在消融实验中，基准U-Net模型使用原始U-Net网络结构，配合混合损失函数和Adam优化器进行训练，详细参数设置和。。此外，基准模型的训练未采用任何形式的数据增强或正则化操作，以便纯粹评估其建模能力与收敛特性。
+在消融实验中，基准U-Net模型使用原始U-Net网络结构，配合混合损失函数和Adam优化器进行训练，关于损失函数和优化器的具体参数设置已在第三章阐述。此外，基准模型的训练未采用任何形式的数据增强或正则化操作，以便纯粹评估其建模能力与收敛特性。
+
+为全面评估基准 U-Net 模型在验证集上的性能表现，图~\ref{fig:base_unet_metrics} 展示了训练过程中多个关键评估指标（包括 Dice 系数、Jaccard 指数、Accuracy、Precision、Recall、F1-Score、Specificity 及 Loss）随 epoch 变化的趋势曲线。训练曲线反映了模型收敛过程及其在训练与验证集上的性能差异，可用于分析模型的拟合能力与泛化效果。
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{fig/base_unet_metrics.pdf}
+    \caption{基准U-Net模型训练过程中的性能指标变化趋势}
+    \label{fig:base_unet_metrics}
+\end{figure}
+
+同时，为便于后续实验中基于最优状态进行比较，本研究以验证集 Dice 指标达到最大值的 epoch 作为标准，提取该时刻对应的各项指标结果并作为基准性能对比点，相关数值如表。
+
+\begin{table}[htbp]
+    \centering
+    \caption{基线U-Net模型在验证集Dice达到最优时（第13轮）的各项性能指标}
+    \label{tab:baseline_metrics_horizontal}
+    \begin{tabular}{ccccccccc}
+        \toprule
+        指标 & Dice & F1-score & Jaccard & Precision & Recall & Accuracy & Specificity & Val-Loss \\
+        \midrule
+        指标值 0.7077 & 0.7030 & 0.5420 & 0.7856 & 0.6266 & 0.9264 & 0.9667 & 0.01312 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \subsubsection{消融实验结果及分析}
 
