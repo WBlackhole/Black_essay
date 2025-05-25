@@ -96,24 +96,23 @@
 
 \begin{table}[htbp]
     \centering
-    \caption{Baseline 与 Augment 模型在相同 Epoch (13) 下的验证集性能对比}
-    \label{tab:augment_ep13}
+    \caption{Baseline 与数据增强模型（Augment）在验证集最佳 Epoch 下的性能对比}
+    \label{tab:augment_best}
     \begin{tabular}{lcccc}
         \toprule
-        指标（Val） & Baseline (Ep 13) & Augment (Ep 13) & 绝对提升 $\Delta$ & 相对提升 \\
+        指标（Val） & Baseline (Ep 45) & Augment (Ep 44) & 绝对提升 $\Delta$ & 相对提升 \\
         \midrule
-        Dice        & 0.7077 & \textbf{0.7230} & +0.0153 & +2.2\% \\
-        F1-score    & 0.7030 & 0.7185 & +0.0155 & +2.2\% \\
-        Jaccard     & 0.5420 & 0.5609 & +0.0189 & +3.5\% \\
-        Precision   & \textbf{0.7856} & 0.7429 & $-$0.0427 & $-$5.4\% \\
-        Recall      & 0.6266 & \textbf{0.6816} & +0.0550 & +8.8\% \\
-        Accuracy    & 0.9264 & 0.9310 & +0.0046 & +0.5\% \\
-        Specificity & 0.9667 & 0.9772 & +0.0105 & +1.1\% \\
-        Val-Loss $\downarrow$ & 0.01312 & \textbf{0.01114} & $-$0.00198 & $-$15.1\% \\
+        Dice        & 0.7469 & \textbf{0.7624} & +0.0155 & +2.1\% \\
+        F1-score    & 0.7299 & 0.7481 & +0.0182 & +2.5\% \\
+        Jaccard     & 0.5747 & 0.5939 & +0.0192 & +3.3\% \\
+        Precision   & \textbf{0.8262} & 0.7429 & $-$0.0833 & $-$10.1\% \\
+        Recall      & 0.6537 & \textbf{0.6816} & +0.0279 & +4.3\% \\
+        Accuracy    & 0.9362 & 0.9399 & +0.0037 & +0.4\% \\
+        Specificity & \textbf{0.9791} & 0.9772 & $-$0.0019 & $-$0.2\% \\
+        Val-Loss $\downarrow$ & 0.01150 & \textbf{0.01011} & $-$0.00139 & $-$12.1\% \\
         \bottomrule
     \end{tabular}
 \end{table}
-
 
 \subsubsection{注意力机制增广实验}
 
@@ -139,20 +138,20 @@
 
 \begin{table}[htbp]
     \centering
-    \caption{融合改进模型（Att + Aug + Hybrid Loss）与 Baseline 性能对比}
-    \label{tab:final_model}
-    \begin{tabular}{lcccc}
+    \caption{各模型在验证集上的主要性能指标横向对比（取最佳 Epoch）}
+    \label{tab:model_summary}
+    \begin{tabular}{lcccccc}
         \toprule
-        验证指标 & Baseline ($\sim$Ep 44) & Att + Aug + Hybrid & $\Delta$ & 相对提升 \\
+        指标（Val） & Baseline & Augment & Att-U-Net & Dice+CE & Final (Att+Aug+Hybrid) \\
         \midrule
-        Dice        & 0.747 & \textbf{0.829} & +0.082 & +11\% \\
-        F1-score    & 0.730 & \textbf{0.814} & +0.084 & +11.5\% \\
-        Jaccard     & 0.575 & \textbf{0.687} & +0.112 & +19.5\% \\
-        Precision   & 0.826 & \textbf{0.843} & +0.017 & +2.1\% \\
-        Recall      & 0.654 & \textbf{0.787} & +0.133 & +20.3\% \\
-        Accuracy    & 0.936 & \textbf{0.950} & +0.014 & +1.5\% \\
-        Specificity & \textbf{0.979} & 0.977 & $-$0.002 & $-$0.2\% \\
-        Val-Loss $\downarrow$ & 0.0115 & \textbf{0.00885} & $-$0.00265 & $-$23\% \\
+        Dice        & 0.7469 & 0.7624 & \textbf{0.818} & 0.752 & \textbf{0.829} \\
+        F1-score    & 0.7299 & 0.7481 & 0.814 & 0.740 & \textbf{0.814} \\
+        Jaccard     & 0.5747 & 0.5939 & 0.665 & 0.588 & \textbf{0.687} \\
+        Precision   & \textbf{0.8262} & 0.7429 & 0.808 & 0.776 & \textbf{0.843} \\
+        Recall      & 0.6537 & 0.6816 & 0.791 & 0.708 & \textbf{0.787} \\
+        Accuracy    & 0.9362 & 0.9399 & 0.948 & 0.934 & \textbf{0.950} \\
+        Specificity & \textbf{0.9791} & 0.9772 & 0.9719 & 0.969 & 0.977 \\
+        Val-Loss $\downarrow$ & 0.01150 & 0.01011 & 0.0105 & 0.0113 & \textbf{0.00885} \\
         \bottomrule
     \end{tabular}
 \end{table}
