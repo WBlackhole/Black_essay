@@ -190,7 +190,7 @@ LoG算子 & 抗噪性强且边缘定位准 & 计算量大，可能丢失细边�
 
 其中$*$表示二维卷积运算，图~\ref{fig:2dcnn}展示了其计算过程。$I$和$K$都是二维张量，$ K \in \mathbb{R}$表示可学习的二维卷积核权重向量，$I \in \mathbb{R}$表示输入的二维图像数据，$(x, y)$代表像素点坐标，$(m, n)$代表输入图像的尺寸。
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{fig/2dcnn-1.png}
     \caption{二维卷积运算}
@@ -202,7 +202,7 @@ LoG算子 & 抗噪性强且边缘定位准 & 计算量大，可能丢失细边�
 
 如图~\ref{fig:fcn_frame}所示，作为后续诸多分割模型模型的基础架构，FCN借鉴了VGG网络的层次化设计，可以支持任意尺寸的输入图像，采用逐像素交叉熵损失进行反向传播，整个网络端到端训练输出与输入同尺寸的逐像素类别图。
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/fcn_frame.png}
     \caption{全卷积网络模型架构}
