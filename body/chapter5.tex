@@ -4,36 +4,36 @@
 
 本文所有实验均在基于Ubuntu 20.04操作系统的Kaggle Notebook环境完成，硬件配置采用Kaggle提供的单张NVIDIA P100 GPU（16GB显存）和30GB RAM内存。实验模型代码基于PyTorch框架搭建，同时搭配CUDA 11.3加速库加速模型训练。
 
-模型的网络权重的初始化采用He normal，并使用初始学习率为$1 \times 10^{-4}$的Adam优化器更新权重。每个实验都进行100轮（epoch）实验，且在每轮训练结束后在验证集上进行模型评估，保存Dice得分最高的模型权重。
+模型的网络权重的初始化采用He normal，并使用初始学习率为$1 \times 10^{-4}$的Adam优化器更新权重。每个实验的训练轮数设置为100个Epoch（本章中简称Ep），且在每轮训练结束后在验证集上进行模型评估，保存Dice得分最高的模型权重。
 
 本文在进行模型评估时，以Dice系数作为核心评价指标，用于衡量模模型在分割任务中预测结果与真实标签之间的重叠程度，是医学图像分割中最常用且最敏感的评估指标之一。为了更全面地反映模型性能，辅以Jaccard指数、F1分数、准确率（Accuracy）、精确率（Precision）与召回率（Recall）等多维度指标进行综合评估。
 
 \subsection{消融和增广实验}
 
-为了系统评估各改进模块对模型语义分割性能的影响，本研究设计了一系列消融实验，围绕模型结构、损失函数与训练策略三个层面展开。以基准U-Net模型作为对照组，逐步引入或移除关键组件，包括跳跃连接、注意力机制、数据增强策略、以及不同的损失函数组合，来观察每项设计对模型性能的独立贡献与协同增益。
+为了系统评估各改进模块对模型语义分割性能的影响，本研究设计了一系列消融实验，围绕模型结构、损失函数与训练策略三个层面展开。以基线U-Net模型作为对照组（本章中简称基线模型），逐步引入或移除关键组件，包括跳跃连接、注意力机制、数据增强策略、以及不同的损失函数组合，来观察每项设计对模型性能的独立贡献与协同增益。
 
 所有消融与增广实验均基于ISIC 2018皮肤癌图像分割数据集进行，采用 8:2 比例划分训练集与验证集，并在固定的模型训练框架和超参数设置下进行公平比较。通过精心设计的分组实验与逐项对照分析，本节将展示各模块在模型收敛速度、最终性能、错误类型等方面的具体影响，为构建最终优化方案提供理论依据与实证支撑。
 
-\subsubsection{基准模型性能验证}
+\subsubsection{基线模型性能验证}
 
-在所有实验中，基准U-Net模型使用原始U-Net网络结构，配合混合损失函数和Adam优化器进行训练，关于损失函数和优化器的具体参数设置已在第三章阐述。此外，基准模型的训练未采用任何形式的数据增强或正则化操作，以便纯粹评估其建模能力与收敛特性。
+在所有实验中，基线模型使用原始U-Net网络结构，配合混合损失函数和Adam优化器进行训练，关于损失函数和优化器的具体参数设置已在第三章阐述。此外，基线模型的训练未采用任何形式的数据增强或正则化操作，以便纯粹评估其建模能力与收敛特性。
 
-为全面评估基准 U-Net 模型在验证集上的性能表现，图~\ref{fig:base_unet_metrics} 展示了训练过程中多个关键评估指标（包括 Dice 系数、Jaccard 指数、Accuracy、Precision、Recall、F1-Score、Specificity 及 Loss）随 epoch 变化的趋势曲线。训练曲线反映了模型收敛过程及其在训练与验证集上的性能差异，可用于分析模型的拟合能力与泛化效果。
+为全面评估基线 U-Net 模型在验证集上的性能表现，图~\ref{fig:base_unet_metrics} 展示了训练过程中多个关键评估指标（包括 Dice 系数、Jaccard 指数、Accuracy、Precision、Recall、F1-Score、Specificity 及 Loss）随 epoch 变化的趋势曲线。训练曲线反映了模型收敛过程及其在训练与验证集上的性能差异，可用于分析模型的拟合能力与泛化效果。
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/base_unet_metrics.pdf}
-    \caption{基准U-Net模型训练过程中的性能指标变化趋势}
+    \caption{基线模型训练过程中的性能指标变化趋势}
     \label{fig:base_unet_metrics}
 \end{figure}
 
-表 \ref{tab:unet_epoch_compare} 对比了基线 U-Net 在验证集上的三个关键时间点——首次达到 Dice ≥ 0.70 的第 13 轮、全局最优的第 45 轮以及训练末期（最后 10 轮）——对应的主要性能指标。可以看到，模型在第 13 个 epoch 即取得 0.7077 的 Dice值 和 0.5420 的 Jaccard值，说明其收敛速度较快。随后经过 32 轮的渐进优化，Dice 进一步提升到 0.7469（+3.9 pp），Jaccard 则提升到 0.5747（+3.3 pp），而 Precision 几乎保持不变（≈ 0.826），表明网络 在保证低假阳性的同时显著减少漏检。Val-Loss 同期下降约 12 \%，与性能上升趋势一致。
+表 \ref{tab:unet_epoch_compare} 对比了基线模型在验证集上的三个关键时间点——首次达到 Dice ≥ 0.70 的第 13 轮、全局最优的第 45 轮以及训练末期（最后 10 轮）——对应的主要性能指标。可以看到，模型在第 13 个 epoch 即取得 0.7077 的 Dice值 和 0.5420 的 Jaccard值，说明其收敛速度较快。随后经过 32 轮的渐进优化，Dice 进一步提升到 0.7469（+3.9 pp），Jaccard 则提升到 0.5747（+3.3 pp），而 Precision 几乎保持不变（≈ 0.826），表明网络 在保证低假阳性的同时显著减少漏检。Val-Loss 同期下降约 12 \%，与性能上升趋势一致。
 
 此外，末 10 轮的均值与标准差（右侧一列）显示各指标波动极小（Dice σ ≈ 0.001），证明模型已进入稳定收敛区间且未出现明显过拟合。基于这一观察，本文后续将第 45 轮作为“最优性能”参考点，而第 13 轮则可作为“早期收敛效率”的对照基准，用以衡量不同改进策略在早期与最终阶段的综合效益。
 
 \begin{table}[htbp]
     \centering
-    \caption{基线U-Net模型关键Epoch验证集性能指标对比}
+    \caption{基线模型关键Epoch验证集性能指标对比}
     \label{tab:unet_epoch_compare}
     \begin{tabular}{lcccc}
         \toprule
@@ -50,35 +50,57 @@
 
 \subsubsection{跳跃连接的结构消融实验}
 
+为了评估跳跃连接在 U-Net 结构中的作用，本文设计了删除跳跃连接的消融实验，并得到了删除跳跃连接后的模型训练指标图~\ref{fig:skipless_unet}。在本节中简称删去跳跃连接后的U-Net模型为Skipless模型。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{fig/skipless_unet_metrics.pdf}
+    \caption{删去跳跃连接后的U-Net模型训练指标趋势}
+    \label{fig:skipless_unet}
+\end{figure}
+
+表\~\ref{tab\:ablation\_skip}展示了基线模型和Skipless模型在最优验证Dice的epoch时，各评价指标的值。从数据上看，Skipless模型在 Dice、F1-score 与 Jaccard 等综合性能指标上实现了小幅提升，分别提高了 1.4\%、2.8\% 与 4.6\%。与此同时，验证损失同步下降，说明模型在删去跳跃连接后未造成训练过程的不稳定或过拟合恶化。
+
 \begin{table}[htbp]
     \centering
     \caption{Baseline U-Net 与删除跳跃连接模型在验证集上的性能对比}
     \label{tab:ablation_skip_connection}
     \begin{tabular}{lcccc}
         \toprule
-        指标 & Baseline U-Net & 无跳跃连接模型 & 绝对变化 & 相对变化 \\
+        指标（Val） & 基线模型（Ep45） & 无跳跃连接模型 & 绝对变化 & 相对变化 \\
         \midrule
-        Dice         & \textbf{0.7469} & \textbf{0.7576} & +0.0107 & +1.4\% \\
-        F1           & 0.7299 & 0.7507 & +0.0208 & +2.8\% \\
-        IoU / Jaccard & 0.5747 & 0.6009 & +0.0262 & +4.6\% \\
+        Dice         & 0.7469 & \textbf{0.7576} & +0.0107 & +1.4\% \\
+        F1           & 0.7299 & \textbf{0.7507} & +0.0208 & +2.8\% \\
+        IoU / Jaccard & 0.5747 & \text{0.6009} & +0.0262 & +4.6\% \\
         Precision    & \textbf{0.8262} & 0.8009 & $-$0.0253 & $-$3.1\% \\
         Recall       & 0.6537 & \textbf{0.7064} & +0.0527 & +8.1\% \\
-        Accuracy     & 0.9362 & 0.9352 & $-$0.0010 & $-$0.1\% \\
-        Specificity  & 0.9791 & 0.9719 & $-$0.0072 & $-$0.7\% \\
+        Accuracy     & \textbf{0.9362} & 0.9352 & $-$0.0010 & $-$0.1\% \\
+        Specificity  & \textbf{0.9791} & 0.9719 & $-$0.0072 & $-$0.7\% \\
         Val-Loss $\downarrow$ & 0.01150 & \textbf{0.01114} & $-$0.00036 & $-$3.1\% \\
         \bottomrule
     \end{tabular}
 \end{table}
 
+
+进一步分析发现，Skipless模型在 Recall 指标上有显著提升+8.1\%，而 Precision 与 Specificity 分别下降了 3.1\% 与 0.7\%。这一现象表明在未使用跳跃连接的情况下，模型更倾向于扩大预测区域，更“激进”地标注前景区域，从而减少漏检但同时带来了更多误检。
+
+在训练–验证泛化能力方面，两组模型的 Train–Val Dice 差值基本一致（Baseline 为 0.089，去跳跃连接后为 0.092），说明该结构调整并未明显影响过拟合程度。训练过程的收敛速度对比显示：Baseline 模型在第 8 轮即可达到验证 Dice ≥ 0.70 的分割性能，而取消跳跃连接的模型则推迟至第 10 轮，反映出 skip connection 在早期阶段确实有助于加速梯度传播与高分辨率细节重建。
+
+结合前文中对U-Net中的跳跃连接结构机制分析可知，跳跃连接将浅层网络中的高分辨率纹理特征直接拼接至解码器端，增强了分割边界的保留与精度。而在跳跃连接被删除后，模型必须依赖上采样的深层语义特征来重建图像细节，结果导致预测边界变得更加平滑甚至过度扩张。这种过度扩张虽然提高了病灶的检出率，但也增加了误报风险。这一结论与 FCN 系列研究中对跳跃连接的功能归因一致，即跳跃连接能显著提升边界分割精度与早期特征利用效率\cite{milletari2016}。
+
+综上，针对ISIC2018 皮肤病变的语义分割任务，跳跃连接并非模型性能的必要条件。在某些关注 Recall 的场景下，去除 skip 反而可带来一定的性能提升。然而，在对误诊率要求较高的临床应用中，保留跳跃连接仍是更稳妥的选择。
+
 \subsubsection{损失函数的混合消融实验}
+
+在进行不同损失函数策略对模型性能的影响的消融实验中，本文共对三种损失函数方案进行了系统对比：基线模型使用等权加权的混合损失（0.5 × DiceLoss + 0.5 × CrossEntropyLoss），另设两组对照实验分别采用 DiceLoss 与 CrossEntropyLoss。在本节中，对照实验方案简称为C组（CrossEntropyLoss）和D组（DiceLoss）。
 
 \begin{table}[htbp]
     \centering
-    \caption{不同损失函数下模型性能对比（B: Baseline，D: Dice-only，C: Dice+CE）}
+    \caption{不同损失函数下模型性能对比（B: Dice+CE，D: Dice-only，C: CE-Only）}
     \label{tab:loss_ablation}
     \begin{tabular}{lcccccc}
         \toprule
-        指标（Val） & B (Ep 44) & D (Ep 99) & C (Ep 78) & $\Delta$ D$-$B & $\Delta$ C$-$B \\
+        指标（Val） & B (Ep45) & D (Ep 99) & C (Ep 78) & $\Delta$ D$-$B & $\Delta$ C$-$B \\
         \midrule
         Dice        & 0.747 & 0.747 & \textbf{0.752} & $-$0.0004 & +0.0046 (+0.6\%) \\
         F1-score    & 0.730 & 0.734 & \textbf{0.740} & +0.004 & +0.010 \\
@@ -91,6 +113,11 @@
         \bottomrule
     \end{tabular}
 \end{table}
+
+
+在验证集最佳 Dice值所在 Epoch 下，三种方案的表现如表\~\ref{tab\:loss\_ablation} 所示。从数据中可以分析出来，C组在顶峰Dice值上略超B组，但Recall值大幅提升，表明通过CrossEntropyLoss对每个像素均衡优化，鼓励网络捕获更多前景，使得捡漏更少，但是因为正负样本的不平衡使得Precision下滑。而由于DiceLoss梯度在早期预测极偏时接近0，使得D组的模型收敛明显变慢。
+
+综述来看，混合损失是综合最稳健的折中，峰性能仅次于D组0.6 \%，却保持 Precision 与 Specificity 最佳。C组适用于追求高召回率的场景，例如早期筛查、提高敏感度，D组综合性能最差，使得模型训练变慢，晚期波动大。
 
 \subsubsection{数据增强增广实验}
 
@@ -114,15 +141,23 @@
     \end{tabular}
 \end{table}
 
+在如表\~\ref{tab\:augment\_best} 所示，对比 Baseline 与数据增强（Augment）模型在验证集上的全局最优性能后可以发现，在基线模型的基础上引入简单的几何增强来提升样本在形态与取向上的多样化，在一定程度上提升了多项评估指标值，增强了模型的整体性能。进一步分析发现，采用数据增强后，模型出现了Precsion-Recall权衡效应：模型的召回率Recall由 0.6537 显著提高至 0.6816，而与此同时精度Precision则从 0.8262 降至 0.7429。
+
+除了上表数据之外，通过统计训练末尾5个 epoch（Tail-5）的验证 Dice 均值与方差发现：Augment 模型 Tail-5 均值为 0.723，方差为 0.013，而 Baseline 分别为 0.700 和 0.023，表明数据增强改善的是最终表示能力与过拟合抑制。
+
+综上，数据增强作为一种低成本、易实施的性能增益策略，在不增加模型结构复杂度的前提下，即可实现模型性能的稳定提升并且抑制过拟合。
+
 \subsubsection{注意力机制增广实验}
+
+在评估跳跃连接引入注意力机制对模型性能的提升效果的增广实验中，引入注意力机制的U-Net模型（本章中简称Attention U-Net）在多个关键指标上取得了显著性能提升。
 
 \begin{table}[htbp]
     \centering
-    \caption{Baseline 与 Att-U-Net 模型在验证集上的性能对比}
+    \caption{Baseline模型 与 Attention U-Net模型在验证集上的性能对比}
     \label{tab:att_unet}
     \begin{tabular}{lcccc}
         \toprule
-        指标（Val） & Baseline (Ep 44) & Att-U-Net (Ep 38) & 绝对提升 $\Delta$ & 相对提升 \\
+        指标（Val） & Baseline模型 (Ep 44) & Attention U-Net (Ep 38) &  $\Delta$ & 相对提升 \\
         \midrule
         Dice        & 0.747 & \textbf{0.818} & +0.071 & +9.5\% \\
         Jaccard     & 0.575 & 0.665 & +0.091 & +15.8\% \\
@@ -134,7 +169,22 @@
     \end{tabular}
 \end{table}
 
-\subsubsection{最终模型}
+如表\~\ref{tab:att_unet} 所示，其验证 Dice 提高了 7.1 个百分点，相对提升达 9.5\%，Jaccard 指标同步增长 15.8\%，说明跳跃连接处的注意力模块让解码端自适应加权高/低层特征，改善边界细节与类间分离度。除此之外，Recall 提升幅度尤为显著，达 21.0\%。相较之下，Precision 略微下降（–2.3\%），说明该模型更敢于召回难分割的像素，用少量的Precision损失换来明显捡漏减少，这一策略在临床早期筛查中更安全。
+
+同时图~\ref{fig:attunet}显示出Attention U-Net的收敛速度显著加快：在首个 epoch 即可达到 Dice ≥ 0.70 的水平，反映出注意力机制增强了前向通路的信息聚合效率，并为反向传播提供了更有效的梯度信号。而且在训练后期的尾部稳定性方面，该模型的 Dice 均值达到 0.812，标准差压缩至 0.0007，较 基线模型 明显缩小，表现出更强的泛化稳定性。然而Attention U-Net模型的 Train–Val Dice Gap 小幅上升（由 0.089 增至 0.114），提示随着模型容量的增加出现轻度过拟合趋势。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{fig/attunet_metrics.pdf}
+    \caption{}
+    \label{fig:attunet}
+\end{figure}
+
+综上，Attention U-Net 作为一种低改动高收益的改进方案，在保持 U-Net 结构主体不变的前提下，即可在 ISIC 2018 数据集上实现 Dice、Recall 等核心指标的全面跃升，且具备更快的收敛速度与更强的训练稳定性。
+
+\subsubsection{U-Net强化方案的整合与验证}
+
+为进一步提升分割性能，本研究在 U-Net 架构基础上，联合引入注意力机制、几何数据增强（旋转与翻转）与 Dice+CE 混合损失函数构建全量强化模型，并与基线模型进行对比评估。如表\~\ref{tab\:final\_model} 所示，该组合在 ISIC 2018 验证集上实现了显著的性能提升。核心指标 Dice 提高了 8.2 个百分点，F1-score 与 IoU 同步提升超过 10\%，而验证损失降低幅度高达 23\%。更重要的是，该方案同时提升了 Recall（+0.133）与 Precision（+0.017），表明模型在降低漏检的同时并未引发误检恶化，这种 Precision–Recall 的双向改善打破了常见的性能权衡瓶颈。
 
 \begin{table}[htbp]
     \centering
@@ -142,12 +192,12 @@
     \label{tab:model_summary}
     \begin{tabular}{lcccccc}
         \toprule
-        指标（Val） & Baseline & Augment & Att-U-Net & Dice+CE & Final (Att+Aug+Hybrid) \\
+        指标（Val） & 基线模型 & Augment U-Net & Atttion U-Net & Dice+CE & 全量强化模型 \\
         \midrule
-        Dice        & 0.7469 & 0.7624 & \textbf{0.818} & 0.752 & \textbf{0.829} \\
+        Dice        & 0.7469 & 0.7624 & 0.818 & 0.752 & \textbf{0.829} \\
         F1-score    & 0.7299 & 0.7481 & 0.814 & 0.740 & \textbf{0.814} \\
         Jaccard     & 0.5747 & 0.5939 & 0.665 & 0.588 & \textbf{0.687} \\
-        Precision   & \textbf{0.8262} & 0.7429 & 0.808 & 0.776 & \textbf{0.843} \\
+        Precision   & 0.8262 & 0.7429 & 0.808 & 0.776 & \textbf{0.843} \\
         Recall      & 0.6537 & 0.6816 & 0.791 & 0.708 & \textbf{0.787} \\
         Accuracy    & 0.9362 & 0.9399 & 0.948 & 0.934 & \textbf{0.950} \\
         Specificity & \textbf{0.9791} & 0.9772 & 0.9719 & 0.969 & 0.977 \\
@@ -155,6 +205,17 @@
         \bottomrule
     \end{tabular}
 \end{table}
+
+图~\ref{fig:all_in_is_art}所展示的全量强化模型训练过程也表现出和Attention U-Net模型一样优异的收敛性和稳定性。但相较于Attention U-Net，全量强化模型的Train–Val Dice Gap 从 0.089 降至 0.082，反映出该策略还整体提升了模型的泛化能力，并未引入额外过拟合风险。
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{fig/allin_unet_metrics.pdf}
+    \caption{}
+    \label{fig:all_in_is_art}
+\end{figure}
+
+上述性能增益可归因于三项策略间的协同机制。首先，跳跃连接中的注意力机制使解码器端能够动态筛选来自编码器的浅层纹理信息，从而精确重建目标边界并增强定位能力，带动 Recall 与边界 IoU 的显著提升。其次，几何增强操作有效提升了模型对取向和形变的鲁棒性，进一步增强了 Recall 稳定性并降低训练后期指标波动。而引入的混合损失函数则结合了 Dice 对整体重叠度的优化能力与 CE 在像素级别的梯度调控作用，有效控制了假阳性，促使 Precision 不仅恢复而且超过基线水平。三者在机制上的互补性构成了明显的协同效应：数据增强扩大了特征覆盖范围，注意力机制引导网络聚焦于关键信息区域，而混合损失函数则提供了更均衡的 FP/FN 优化路径，最终带来了 Precision–Recall 同时提升的理想结果。
 
 \subsection{泛化性测试}
 %在不同医学图像模态（如CT、MRI）和不同器官分割任务中测试改进方法的泛化能力。
