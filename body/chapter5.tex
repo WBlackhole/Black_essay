@@ -96,11 +96,11 @@
 
 \begin{table}[htbp]
     \centering
-    \caption{不同损失函数下模型性能对比（B: Dice+CE，D: Dice-only，C: CE-Only）}
+    \caption{不同损失函数下模型性能对比}
     \label{tab:loss_ablation}
     \begin{tabular}{lcccccc}
         \toprule
-        指标（Val） & B (Ep45) & D (Ep 99) & C (Ep 78) & $\Delta$ D$-$B & $\Delta$ C$-$B \\
+        指标（Val） & 基线模型(Ep45) & D (Ep 99) & C (Ep 78) & $\Delta$ D$-$B & $\Delta$ C$-$B \\
         \midrule
         Dice        & 0.747 & 0.747 & \textbf{0.752} & $-$0.0004 & +0.0046 (+0.6\%) \\
         F1-score    & 0.730 & 0.734 & \textbf{0.740} & +0.004 & +0.010 \\
@@ -130,7 +130,7 @@
     \label{tab:augment_best}
     \begin{tabular}{lcccc}
         \toprule
-        指标（Val） & Baseline (Ep 45) & Augment (Ep 44) & 绝对提升 $\Delta$ & 相对提升 \\
+        指标（Val） & Baseline (Ep45) & Augment (Ep 44) & 绝对提升 $\Delta$ & 相对提升 \\
         \midrule
         Dice        & 0.7469 & \textbf{0.7624} & +0.0155 & +2.1\% \\
         F1-score    & 0.7299 & 0.7481 & +0.0182 & +2.5\% \\
@@ -160,7 +160,7 @@
     \label{tab:att_unet}
     \begin{tabular}{lcccc}
         \toprule
-        指标（Val） & 基线模型 (Ep 44) & Attention U-Net (Ep 38) &  $\Delta$ & 相对提升 \\
+        指标（Val） & 基线模型 (Ep45) & Attention U-Net (Ep 38) &  $\Delta$ & 相对提升 \\
         \midrule
         Dice        & 0.747 & \textbf{0.818} & +0.071 & +9.5\% \\
         Jaccard     & 0.575 & 0.665 & +0.091 & +15.8\% \\
@@ -187,7 +187,7 @@
 
 \subsubsection{U-Net强化方案的整合与验证}
 
-为进一步提升分割性能，本研究在 U-Net 架构基础上，联合引入注意力机制、几何数据增强（旋转与翻转）与 Dice+CE 混合损失函数构建全量强化模型，并与基线模型进行对比评估。如表\~\ref{tab:model_summary} 所示，该组合在 ISIC 2018 验证集上实现了显著的性能提升。核心指标 Dice 提高了 8.2 个百分点，F1-score 与 IoU 同步提升超过 10\%，而验证损失降低幅度高达 23\%。更重要的是，该方案同时提升了 Recall（+0.133）与 Precision（+0.017），表明模型在降低漏检的同时并未引发误检恶化，这种 Precision–Recall 的双向改善打破了常见的性能权衡瓶颈。
+为进一步提升分割性能，本研究在 U-Net 架构基础上，联合引入注意力机制、几何数据增强（旋转与翻转）与 Dice+CE 混合损失函数构建全量强化模型，并与基线模型进行对比评估。如表~\ref{tab:final_model} 所示，该组合在 ISIC 2018 验证集上实现了显著的性能提升。核心指标 Dice 提高了 8.2 个百分点，F1-score 与 IoU 同步提升超过 10\%，而验证损失降低幅度高达 23\%。更重要的是，该方案同时提升了 Recall（+0.133）与 Precision（+0.017），表明模型在降低漏检的同时并未引发误检恶化，这种 Precision–Recall 的双向改善打破了常见的性能权衡瓶颈。
 
 \begin{table}[htbp]
     \centering
@@ -195,7 +195,7 @@
     \label{tab:model_summary}
     \begin{tabular}{lcccccc}
         \toprule
-        指标（Val） & 基线模型 & Augment U-Net & Atttion U-Net & Dice+CE & 全量强化模型 \\
+        指标（Val） & 基线模型(EP45) & Augment U-Net & Atttion U-Net & Dice+CE & 全量强化模型 \\
         \midrule
         Dice        & 0.7469 & 0.7624 & 0.818 & 0.752 & \textbf{0.829} \\
         F1-score    & 0.7299 & 0.7481 & 0.814 & 0.740 & \textbf{0.814} \\
