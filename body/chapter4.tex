@@ -30,7 +30,7 @@
 
 其中，$\sigma_1$ 和 $\sigma_2$ 分别为 ReLU 和 Sigmoid 激活函数，$W_x$ 和 $W_g$ 是用于特征映射的权重矩阵，$\psi$ 是线性变换矩阵，$b_g$ 和 $b_\psi$ 是偏置项。在这个公式中，$q_{\text{att}}^l$ 是通过加法操作和线性变换后得到的注意力得分，$\alpha_l$ 是最终计算得到的注意力系数。通过Sigmoid激活，$\alpha_l$ 的值范围被限制在$[0, 1]$之间，能够根据不同位置的特征重要性动态调整每个位置的注意力权重。
 
-为了进一步探究注意力门的机制和作用，本文直观展示了同一张 ISIC 图像在原始 U-Net 与 Attention-U-Net 在四级跳跃通路上的特征图，并截取其中 4 个的通道进行并排可视化，如图 \ref{fig:skip_vs_gate_vis} 所示。图中左半四列（Skip-ch0~ch3）对应原始U-Net网络的编码器跳跃连接后准备和解码器拼接的特征图；右半四列（Gate-ch0~ch3）则是 Attention U-Net经过注意力门调制后的准备和解码器拼接的特征图。纵向从上到下依次为四级跳跃连接（Skip1/Gate1~Skip4/Gate4）。
+为了进一步探究注意力门的机制和作用，本文直观展示了同一张 ISIC 图像分别在原始 U-Net 与 Attention-U-Net 四级跳跃通路上的特征图，并截取其中 4 个通道进行并排可视化，如图 \ref{fig:skip_vs_gate_vis} 所示。图中左半四列（Skip:ch0-ch3）对应原始U-Net网络的编码器跳跃连接后准备和解码器拼接的特征图；右半四列（Gate:ch0-ch3）则是 Attention U-Net经过注意力门调制后的准备和解码器拼接的特征图。纵向从上到下依次为四级跳跃连接（Skip1/Gate1-Skip4/Gate4）。
 
 \begin{figure}
     \centering
@@ -39,7 +39,7 @@
     \label{fig:skip_vs_gate_vis}
 \end{figure}
 
-从对比可以得到三点关键观察：
+通过对比，可以得到三点关键观察：
 
 \begin{enumerate}
     \item 浅层抑噪：在 Skip1 与 Skip2 中，原始特征几乎整幅图像均有弱激活，背景纹理与病灶边界难以区分；而 Gate1、Gate2 中大量背景像素被压制至 0 – 0.2 的低激活区，仅在病灶主体及其边缘保留显著响应，说明注意力门已在最早层面过滤掉无用纹理。
