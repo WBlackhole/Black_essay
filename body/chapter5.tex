@@ -214,7 +214,7 @@
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/allin_unet_metrics.pdf}
-    \caption{融合多策略优化的最终模型在训练过程中的性能变化曲线}
+    \caption{AAH U-Net训练过程中的性能变化曲线}
     \label{fig:all_in_is_art}
 \end{figure}
 
@@ -230,7 +230,7 @@
 
 \begin{table}[!htbp]
     \centering
-    \caption{强化模型在 LiTS 验证集上的综合性能指标}
+    \caption{AAH U-Net在 LiTS 验证集上的综合性能指标}
     \label{tab:lits_final_metrics}
     \begin{tabular}{lccccccc}
         \toprule
@@ -258,12 +258,12 @@ AAH U-Net在LiTS肝肿瘤的分割Dice系数达到了0.893，Jaccard指标为0.7
 
 \subsubsection{BraTS脑肿瘤MRI数据集泛化性测试}
 
-与前述ISIC数据集和LiTS数据集相比，BraTS 2020数据集作为多模态数据集，每个病例都包含了T1、T1-ce、T2和FLAIR四张MRI序列。同时，如图~\ref{fig:final}所示，对脑肿瘤的语义分割需要同时分割水肿区（ED）、增强肿瘤核心（ET）与坏死区（NCR），形态差异大，类间不平衡显著。
+与前述ISIC 2018数据集和LiTS 2017数据集相比，BraTS 2020数据集作为多模态数据集，每个病例都包含了T1、T1-ce、T2和FLAIR四张MRI序列。同时，如图~\ref{fig:final}所示，对脑肿瘤的语义分割需要同时分割水肿区（ED）、增强肿瘤核心（ET）与坏死区（NCR），形态差异大，类间不平衡显著。
 
 \begin{figure}[!h]
     \centering
     \includegraphics[width=\textwidth]{fig/final_3view_with_right_legend.pdf}
-    \caption{BraTS 脑肿瘤 MRI 示例的多模态输入与标签分布}
+    \caption{BraTS 脑肿瘤 MRI 示例的多模态输入与语义标签分布}
     \label{fig:final}
 \end{figure}
 
@@ -271,7 +271,7 @@ AAH U-Net在LiTS肝肿瘤的分割Dice系数达到了0.893，Jaccard指标为0.7
 
 \begin{table}[!h]
     \centering
-    \caption{强化模型在 BraTS2020 验证集上的综合性能指标}
+    \caption{AAH U-Net在 BraTS2020 验证集上的综合性能指标}
     \label{tab:brain_final_metrics}
     \begin{tabular}{lcccccccc}
         \toprule
