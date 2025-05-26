@@ -32,7 +32,7 @@
 
 为了进一步探究注意力门的机制和作用，本文直观展示了同一张 ISIC 图像分别在原始 U-Net 与 Attention-U-Net 四级跳跃通路上的特征图，并截取其中 4 个通道进行并排可视化，如图 \ref{fig:skip_vs_gate_vis} 所示。图中左半四列（Skip:ch0-ch3）对应原始U-Net网络的编码器跳跃连接后准备和解码器拼接的特征图；右半四列（Gate:ch0-ch3）则是 Attention U-Net经过注意力门调制后的准备和解码器拼接的特征图。纵向从上到下依次为四级跳跃连接（Skip1/Gate1-Skip4/Gate4）。
 
-\begin{figure}
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/unet_vs_attunet_feature_compare.png}
     \caption{}
