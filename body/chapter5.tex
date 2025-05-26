@@ -54,7 +54,7 @@
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{fig/skipless_unet_metrics.pdf}
+    \includegraphics[width=0.9\textwidth]{fig/skipless_unet_metrics.pdf}
     \caption{删去跳跃连接后的U-Net模型训练指标趋势}
     \label{fig:skipless_unet}
 \end{figure}
@@ -179,7 +179,7 @@
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{fig/attunet_metrics.pdf}
-    \caption{}
+    \caption{Attention U-Net在训练过程中的性能指标变化曲线}
     \label{fig:attunet}
 \end{figure}
 
@@ -214,7 +214,7 @@
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{fig/allin_unet_metrics.pdf}
-    \caption{}
+    \caption{融合多策略优化的最终模型在训练过程中的性能变化曲线}
     \label{fig:all_in_is_art}
 \end{figure}
 
@@ -258,26 +258,26 @@
 
 \subsubsection{BraTS脑肿瘤MRI数据集泛化性测试}
 
-与前述ISIC数据集和LiTS数据集相比，BraTS 2020数据集作为多模态数据集，每个病例都包含了T1、T1-ce、T2和FLAIR四张MRI序列；更重要的是，如图~\ref{fig:final}所示，对脑肿瘤的语义分割需要同时分割水肿区（ED）、增强肿瘤核心（ET）与坏死区（NCR），形态差异大，类间不平衡显著。但是，为了得到更广泛的结论，本文选用了BraTS 2020这个高难度数据集进行多模态多分类语义分割任务的泛化性测试。
+与前述ISIC数据集和LiTS数据集相比，BraTS 2020数据集作为多模态数据集，每个病例都包含了T1、T1-ce、T2和FLAIR四张MRI序列。同时，如图~\ref{fig:final}所示，对脑肿瘤的语义分割需要同时分割水肿区（ED）、增强肿瘤核心（ET）与坏死区（NCR），形态差异大，类间不平衡显著。
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{fig/final_3view_with_right_legend.pdf}
-    \caption{}
+    \caption{BraTS 脑肿瘤 MRI 示例的多模态输入与标签分布}
     \label{fig:final}
 \end{figure}
 
-有研究表明对于脑肿瘤语义分割任务，FLAIR和T1-ce这两种模态组合作为输入序列是模型训练最佳的组合选择\cite{buchner2023}。因此，针对BraTS 2020数据集，本研究仅采用FLAIR和T1ce两种模态作为输入序列，同时剔除无标注信息的空白切片以缓解类别极端不平衡问题。最终模型的表现见表~\ref{tab:brain_final_metrics}。
+为了得到更广泛的泛化性测试结论，本文选用了BraTS 2020这个高难度数据集进行多模态多分类语义分割任务的泛化性测试。此外，有研究表明对于脑肿瘤语义分割任务，FLAIR和T1-ce这两种模态组合作为输入序列是模型训练最佳的组合选择\cite{buchner2023}。因此，针对BraTS 2020数据集，本研究仅采用FLAIR和T1ce两种模态作为输入序列，同时剔除无标注信息的空白切片以缓解类别极端不平衡问题。最终模型的表现见表~\ref{tab:brain_final_metrics}。
 
 \begin{table}[htbp]
     \centering
     \caption{强化模型在 BraTS2020 验证集上的综合性能指标}
     \label{tab:brain_final_metrics}
-    \begin{tabular}{lccccccccc}
+    \begin{tabular}{lcccccccc}
         \toprule
-        指标 & Dice & Dice-ED & Dice-ET & Dice-NCR & Jaccard & F1-score & Precision & Senstivity & Val-Loss$downarrow$ \\
+        指标 & Dice & Dice-ED & Dice-ET & Dice-NCR & Jaccard & F1-score & Precision & Senstivity\\
         \midrule
-        数值 & 0.826 & 0.874 & 0.793 & 0.787 & 0.905 & 0.704 & 0.815 & 0.987 & 0.986 & 0.0174\\
+        数值 & 0.826 & 0.874 & 0.793 & 0.787 & 0.905 & 0.704 & 0.815 & 0.987 & 0.986\\
         \bottomrule
     \end{tabular}
 \end{table}
