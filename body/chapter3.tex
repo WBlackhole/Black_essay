@@ -4,7 +4,6 @@
 
 图~\ref{fig:dataset} 展示了本研究所使用的三个医学图像分割数据集中的典型图像样本：ISIC皮肤镜影像数据集、LiTS肝脏CT数据集和BraTS脑肿瘤数据集。
 
-
 \begin{figure}[htbp]
     \centering
     \subfloat[皮肤镜图像（ISIC）]
@@ -159,8 +158,6 @@ Accuracy直观反映模型的综合判断能力，但在病灶面积远小于背
 
 在医学任务中，高特异性可减少健康组织被误判为病变的风险（如避免正常脑组织被误分割为肿瘤），提升结果的可信度，与 Recall 形成互补。
 
-Jaccard指数（IoU）计算预测与真实标签的交集与并集的比值，是分割任务的经典指标：
-
 精确率Precision表示预测为正类的样本中实际为正类的比例，反映模型的预测可靠性：
 
 \begin{equation}
@@ -192,6 +189,8 @@ Dice系数衡量预测结果与真实标签的重叠程度，是医学图像分�
 \end{equation}
 
 其中，A为预测区域，B为真实区域。Dice系数直接衡量空间重叠，对不平衡数据敏感度低，能有效评估模型对病灶轮廓的捕捉精度，尤其适用于小目标分割任务（如脑肿瘤核心）。
+
+Jaccard指数也称为IoU，计算预测与真实标签的交集与并集的比值，是分割任务的经典指标：
 
 \begin{equation}
     \mathrm{Jaccard}=\frac{T P}{T P+F P+F N}=\frac{|A \cap B|}{|A \cup B|}
