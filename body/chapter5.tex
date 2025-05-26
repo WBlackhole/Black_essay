@@ -67,7 +67,7 @@
     \label{tab:ablation_skip_connection}
     \begin{tabular}{lcccc}
         \toprule
-        指标（Val） & 基线模型（Ep45） & Skipless模型 & 绝对变化 & 相对变化 \\
+        指标（Val） & 基线模型（Ep45） & Skipless模型 & $\Delta$ & 相对变化 \\
         \midrule
         Dice         & 0.7469 & \textbf{0.7576} & +0.0107 & +1.4\% \\
         F1           & 0.7299 & \textbf{0.7507} & +0.0208 & +2.8\% \\
@@ -130,7 +130,7 @@
     \label{tab:augment_best}
     \begin{tabular}{lcccc}
         \toprule
-        指标（Val） & 基线模型(Ep45) & Augment U-Net(Ep 44) & 绝对提升 $\Delta$ & 相对提升 \\
+        指标（Val） & 基线模型(Ep45) & Augment U-Net(Ep 44) & $\Delta$ & 相对提升 \\
         \midrule
         Dice        & 0.7469 & \textbf{0.7624} & +0.0155 & +2.1\% \\
         F1-score    & 0.7299 & \textbf{0.7481} & +0.0182 & +2.5\% \\
@@ -185,7 +185,7 @@
 
 综上，Attention U-Net 作为一种低改动高收益的改进方案，在保持 U-Net 结构主体不变的前提下，即可在 ISIC 2018 数据集上实现 Dice、Recall 等核心指标的全面跃升，且具备更快的收敛速度与更强的训练稳定性。
 
-\subsubsection{U-Net强化方案的整合与验证}
+\subsubsection{综合模型的构建与性能验证}
 
 为进一步提升分割性能，本研究在 U-Net 架构基础上，联合引入注意力机制、几何数据增强（旋转与翻转）与 Dice+CE 混合损失函数构建了AAH U-Net模型（Attention-Augmentation-Hybrid Loss U-Net），并与基线模型进行对比评估。如表~\ref{tab:model_summary} 所示，该组合在 ISIC 2018 验证集上实现了显著的性能提升。核心指标 Dice 提高了 8.2 个百分点，F1-score 与 IoU 同步提升超过 10\%，而验证损失降低幅度高达 23\%。更重要的是，该方案同时提升了 Recall（+0.133）与 Precision（+0.017），表明模型在降低漏检的同时并未引发误检恶化，这种 Precision–Recall 的双向改善打破了常见的性能权衡瓶颈。
 
@@ -195,7 +195,7 @@
     \label{tab:model_summary}
     \begin{tabular}{lcccccc}
         \toprule
-        指标（Val） & 基线模型(EP45) & Augment U-Net & Atttion U-Net & HybridLoss U-Net & AAH U-Net \\
+        指标（Val） & 基线模型(EP45) & Augment U-Net & Attention U-Net & HybridLoss U-Net & AAH U-Net \\
         \midrule
         Dice        & 0.7469 & 0.7624 & 0.818 & 0.752 & \textbf{0.829} \\
         F1-score    & 0.7299 & 0.7481 & 0.814 & 0.740 & \textbf{0.814} \\
@@ -216,6 +216,26 @@
     \includegraphics[width=\textwidth]{fig/allin_unet_metrics.pdf}
     \caption{AAH U-Net训练过程中的性能变化曲线}
     \label{fig:all_in_is_art}
+\end{figure}
+
+为了进一步展示消融实验和增广实验中不同模型的分割性能，在ISIC 2018数据集的测试集中随机抽取了两张数据展示模型分割结果，如图~\ref{fig:ablation_results}所示，其中绿色轮廓线为原数据的真实分割线，蓝色轮廓线为各模型的预测分割线。
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{fig/ablation_compare_row1.png}
+    \end{subfigure}
+    
+    \vspace{0.5em}  % 子图之间留一点间距
+
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{fig/ablation_compare_row2.png}
+    \end{subfigure}
+
+    \caption{消融实验中不同模型在皮肤病变图像上的分割结果对比}
+    \label{fig:ablation_results}
 \end{figure}
 
 上述性能增益可归因于三项策略间的协同机制。首先，跳跃连接中的注意力机制使解码器端能够动态筛选来自编码器的浅层纹理信息，从而精确重建目标边界并增强定位能力，带动 Recall 与边界 IoU 的显著提升。其次，几何增强操作有效提升了模型对取向和形变的鲁棒性，进一步增强了 Recall 稳定性并降低训练后期指标波动。而引入的混合损失函数则结合了 Dice 对整体重叠度的优化能力与 CE 在像素级别的梯度调控作用，有效控制了假阳性，促使 Precision 不仅恢复而且超过基线水平。三者在机制上的互补性构成了明显的协同效应：数据增强扩大了特征覆盖范围，注意力机制引导网络聚焦于关键信息区域，而混合损失函数则提供了更均衡的 FP/FN 优化路径，最终带来了 Precision–Recall 同时提升的理想结果。
@@ -262,7 +282,7 @@ AAH U-Net在LiTS肝肿瘤的分割Dice系数达到了0.893，Jaccard指标为0.7
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=\textwidth]{fig/final_3view_with_right_legend.pdf}
+    \includegraphics[width=\textwidth]{fig/final_3view_with_right_legend.png}
     \caption{BraTS 脑肿瘤 MRI 示例的多模态输入与语义标签分布}
     \label{fig:final}
 \end{figure}
