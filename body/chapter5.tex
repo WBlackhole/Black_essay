@@ -176,7 +176,7 @@
 
 同时图~\ref{fig:attunet}还显示出Attention U-Net的收敛速度显著加快：在首个 epoch 即可达到 Dice ≥ 0.70 的水平，表明注意力机制增强了前向通路的信息聚合效率，并为反向传播提供了更有效的梯度信号。而且在训练后期的尾部稳定性方面，该模型的 Dice 均值达到 0.812，标准差压缩至 0.0007，较 基线模型 明显缩小，表现出更强的泛化稳定性。然而Attention U-Net模型的 Train–Val Dice最小差值较基线模型小幅上升至 0.114，提示随着模型容量的增加出现轻度过拟合趋势。
 
-\begin{figure}
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/attunet_metrics.pdf}
     \caption{Attention U-Net在训练过程中的性能指标变化曲线}
@@ -189,7 +189,7 @@
 
 为进一步提升分割性能，本研究在 U-Net 架构基础上，联合引入注意力机制、几何数据增强（旋转与翻转）与 Dice+CE 混合损失函数构建全量强化模型，并与基线模型进行对比评估。如表~\ref{tab:model_summary} 所示，该组合在 ISIC 2018 验证集上实现了显著的性能提升。核心指标 Dice 提高了 8.2 个百分点，F1-score 与 IoU 同步提升超过 10\%，而验证损失降低幅度高达 23\%。更重要的是，该方案同时提升了 Recall（+0.133）与 Precision（+0.017），表明模型在降低漏检的同时并未引发误检恶化，这种 Precision–Recall 的双向改善打破了常见的性能权衡瓶颈。
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
     \centering
     \caption{各模型在验证集上的主要性能指标横向对比（取最佳 Epoch）}
     \label{tab:model_summary}
@@ -211,7 +211,7 @@
 
 图~\ref{fig:all_in_is_art}所展示的全量强化模型训练过程也表现出和Attention U-Net模型一样优异的收敛性和稳定性。但相较于Attention U-Net，全量强化模型的Train–Val Dice差值从 0.089 降至 0.082，反映出该策略还整体提升了模型的泛化能力，并未引入额外过拟合风险。
 
-\begin{figure}
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{fig/allin_unet_metrics.pdf}
     \caption{融合多策略优化的最终模型在训练过程中的性能变化曲线}
@@ -228,7 +228,7 @@
 
 针对在LiTS 肝肿瘤 CT 数据集上展开的全量泛化测试，结果显示，在前述ISIC 2018皮肤镜图像分割实验中构建的全量强化模型模型在 LiTS 验证集中同样展现出卓越的语义分割性能，最终的测试结果如表~\ref{tab:lits_final_metrics}所示。
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
     \centering
     \caption{强化模型在 LiTS 验证集上的综合性能指标}
     \label{tab:lits_final_metrics}
@@ -247,7 +247,7 @@
 
 图~\ref{fig:LITS_fanhua}展示了全量化模型训练时各指标的变化趋势，不难发现，模型包括Dice系数在内的各个指标的值，在训练和验证阶段几乎持平，显示出极小的过拟合倾向，说明该网络结构在 LiTS 数据集上表现出了非常良好的泛化能力。
 
-\begin{figure}
+\begin{figure}[!h]
     \centering
     \includegraphics[width=\textwidth]{fig/LITS_fanhua.pdf}
     \caption{全量强化模型在LiTS数据集上的训练过程}
@@ -260,7 +260,7 @@
 
 与前述ISIC数据集和LiTS数据集相比，BraTS 2020数据集作为多模态数据集，每个病例都包含了T1、T1-ce、T2和FLAIR四张MRI序列。同时，如图~\ref{fig:final}所示，对脑肿瘤的语义分割需要同时分割水肿区（ED）、增强肿瘤核心（ET）与坏死区（NCR），形态差异大，类间不平衡显著。
 
-\begin{figure}
+\begin{figure}[!h]
     \centering
     \includegraphics[width=\textwidth]{fig/final_3view_with_right_legend.pdf}
     \caption{BraTS 脑肿瘤 MRI 示例的多模态输入与标签分布}
@@ -269,7 +269,7 @@
 
 为了得到更广泛的泛化性测试结论，本文选用了BraTS 2020这个高难度数据集进行多模态多分类语义分割任务的泛化性测试。此外，有研究表明对于脑肿瘤语义分割任务，FLAIR和T1-ce这两种模态组合作为输入序列是模型训练最佳的组合选择\cite{buchner2023}。因此，针对BraTS 2020数据集，本研究仅采用FLAIR和T1ce两种模态作为输入序列，同时剔除无标注信息的空白切片以缓解类别极端不平衡问题。最终模型的表现见表~\ref{tab:brain_final_metrics}。
 
-\begin{table}[htbp]
+\begin{table}[!h]
     \centering
     \caption{强化模型在 BraTS2020 验证集上的综合性能指标}
     \label{tab:brain_final_metrics}
@@ -277,7 +277,7 @@
         \toprule
         指标 & Dice & Dice-ED & Dice-ET & Dice-NCR & Jaccard & F1-score & Precision & Senstivity\\
         \midrule
-        数值 & 0.826 & 0.874 & 0.793 & 0.787 & 0.905 & 0.704 & 0.815 & 0.987 & 0.986\\
+        数值 & 0.826 & 0.874 & 0.793 & 0.787 & 0.905 & 0.704 & 0.815 & 0.987 \\
         \bottomrule
     \end{tabular}
 \end{table}
