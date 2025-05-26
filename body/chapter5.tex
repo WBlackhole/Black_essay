@@ -92,7 +92,7 @@
 
 \subsubsection{损失函数的混合消融实验}
 
-为了验证不同损失函数策略对模型性能的影响，本文共对三种损失函数方案进行了系统性的消融对比：基线模型使用等权加权的混合损失（0.5 × DiceLoss + 0.5 × CrossEntropyLoss），另设两组对照实验分别采用 DiceLoss 与 CrossEntropyLoss。在本节中，对照实验方案简称为C组（CrossEntropyLoss）和D组（DiceLoss）。
+为了验证不同损失函数策略对模型性能的影响，本文共对三种损失函数方案进行了系统性的消融对比：基线模型使用DiceLoss和CrossEntropyLoss等权加权的混合损失（HybridLoss），另设两组对照实验分别采用 DiceLoss 与 CrossEntropyLoss。在本节中，对照实验方案简称为C组（CrossEntropyLoss）和D组（DiceLoss）。
 
 \begin{table}[htbp]
     \centering
@@ -187,7 +187,7 @@
 
 \subsubsection{U-Net强化方案的整合与验证}
 
-为进一步提升分割性能，本研究在 U-Net 架构基础上，联合引入注意力机制、几何数据增强（旋转与翻转）与 Dice+CE 混合损失函数构建全量强化模型，并与基线模型进行对比评估。如表~\ref{tab:model_summary} 所示，该组合在 ISIC 2018 验证集上实现了显著的性能提升。核心指标 Dice 提高了 8.2 个百分点，F1-score 与 IoU 同步提升超过 10\%，而验证损失降低幅度高达 23\%。更重要的是，该方案同时提升了 Recall（+0.133）与 Precision（+0.017），表明模型在降低漏检的同时并未引发误检恶化，这种 Precision–Recall 的双向改善打破了常见的性能权衡瓶颈。
+为进一步提升分割性能，本研究在 U-Net 架构基础上，联合引入注意力机制、几何数据增强（旋转与翻转）与 Dice+CE 混合损失函数构建了AAH U-Net模型（Attention-Augmentation-Hybrid Loss U-Net），并与基线模型进行对比评估。如表~\ref{tab:model_summary} 所示，该组合在 ISIC 2018 验证集上实现了显著的性能提升。核心指标 Dice 提高了 8.2 个百分点，F1-score 与 IoU 同步提升超过 10\%，而验证损失降低幅度高达 23\%。更重要的是，该方案同时提升了 Recall（+0.133）与 Precision（+0.017），表明模型在降低漏检的同时并未引发误检恶化，这种 Precision–Recall 的双向改善打破了常见的性能权衡瓶颈。
 
 \begin{table}[!htbp]
     \centering
@@ -195,7 +195,7 @@
     \label{tab:model_summary}
     \begin{tabular}{lcccccc}
         \toprule
-        指标（Val） & 基线模型(EP45) & Augment U-Net & Atttion U-Net & Dice+CE & 全量强化模型 \\
+        指标（Val） & 基线模型(EP45) & Augment U-Net & Atttion U-Net & HybridLoss U-Net & AAH U-Net \\
         \midrule
         Dice        & 0.7469 & 0.7624 & 0.818 & 0.752 & \textbf{0.829} \\
         F1-score    & 0.7299 & 0.7481 & 0.814 & 0.740 & \textbf{0.814} \\
@@ -209,7 +209,7 @@
     \end{tabular}
 \end{table}
 
-图~\ref{fig:all_in_is_art}所展示的全量强化模型训练过程也表现出和Attention U-Net模型一样优异的收敛性和稳定性。但相较于Attention U-Net，全量强化模型的Train–Val Dice差值从 0.089 降至 0.082，反映出该策略还整体提升了模型的泛化能力，并未引入额外过拟合风险。
+图~\ref{fig:all_in_is_art}所展示的AAH U-Net模型训练过程也表现出和Attention U-Net模型一样优异的收敛性和稳定性。但相较于Attention U-Net，AAH U-Net的Train–Val Dice差值从 0.089 降至 0.082，反映出该策略还整体提升了模型的泛化能力，并未引入额外过拟合风险。
 
 \begin{figure}[!htbp]
     \centering
@@ -226,7 +226,7 @@
 
 \subsubsection{LiTS肝脏CT数据集泛化性测试}
 
-针对在LiTS 肝肿瘤 CT 数据集上展开的全量泛化测试，结果显示，在前述ISIC 2018皮肤镜图像分割实验中构建的全量强化模型模型在 LiTS 验证集中同样展现出卓越的语义分割性能，最终的测试结果如表~\ref{tab:lits_final_metrics}所示。
+针对在LiTS 肝肿瘤 CT 数据集上展开的全量泛化测试，结果显示，在前述ISIC 2018皮肤镜图像分割实验中构建的AAH U-Net模型在 LiTS 验证集中同样展现出卓越的语义分割性能，最终的测试结果如表~\ref{tab:lits_final_metrics}所示。
 
 \begin{table}[!htbp]
     \centering
@@ -241,7 +241,7 @@
     \end{tabular}
 \end{table}
 
-全量强化模型在LiTS肝肿瘤的分割Dice系数达到了0.893，Jaccard指标为0.757，均优于目前同类二维方法的常规表现，说明该策略在解剖结构更复杂、目标比例更小的医学图像任务中依然具备良好迁移性。
+AAH U-Net在LiTS肝肿瘤的分割Dice系数达到了0.893，Jaccard指标为0.757，均优于目前同类二维方法的常规表现，说明该策略在解剖结构更复杂、目标比例更小的医学图像任务中依然具备良好迁移性。
 
 从性能分布来看，模型在多个维度上呈现出一致而稳定的优势。首先，在 Recall 方面取得 0.905 的高分，显示模型在识别小体积病灶时仍具备极强的检出能力，尤其适用于肿瘤早筛与术前评估等高敏感性应用场景。同时 Precision 保持在 0.822 的高位，未出现明显误检恶化，说明模型仍保持合理的类别判别能力。在整体准确率与特异性方面亦分别达到 0.996 与 0.9975，进一步证明模型在背景区域判定方面的稳健性。
 
@@ -250,7 +250,7 @@
 \begin{figure}[!h]
     \centering
     \includegraphics[width=\textwidth]{fig/LITS_fanhua.pdf}
-    \caption{全量强化模型在LiTS数据集上的训练过程}
+    \caption{AAH U-Net在LiTS数据集上的训练过程}
     \label{fig:LITS_fanhua}
 \end{figure}
 
@@ -282,12 +282,15 @@
     \end{tabular}
 \end{table}
 
-与 ISIC和 LiTS数据集上指标结果相比，BraTS 的平均Dice系数和三类子区的Dice系数都偏低。这主要是因为模型需要在单幅切片上区分三种形态各异的肿瘤组织，类别之间互斥且界面模糊，难度显著高于前两个二分类任务。同时三类病灶总体体素占脑体积不到 2 \%，前景稀疏导致网络更容易受到类别不平衡和样本噪声的影响。因此，在同等网络与训练策略下，BraTS 的指标略低于 LiTS 与 ISIC 属于预期现象。
+与 ISIC 2018和 LiTS 2017数据集上指标结果相比，BraTS 2020 的平均Dice系数和三类子区的Dice系数都偏低。这主要是因为模型需要在单幅切片上区分三种形态各异的肿瘤组织，类别之间互斥且界面模糊，难度显著高于前两个二分类任务。同时三类病灶总体体素占脑体积不到 2 \%，前景稀疏导致网络更容易受到类别不平衡和样本噪声的影响。因此，在同等网络与训练策略下，BraTS 2020 的指标略低于 LiTS 2017 与 ISIC 2018 属于预期现象。
 
-尽管如此，模型仍在 BraTS 上的训练曲线稳定收敛。面对多模 MRI 输入、三类结构区分与极端前景稀疏的情况，本文所采用的注意力增强 U-Net 架构依然在验证集上取得了 0.826 的平均 Dice系数、0.704 的 Jaccard，以及高达 0.987 的 Precision 和 0.986 的 Sensitivity。这些结果表明模型在三类前景之间均具有良好的识别能力，尤其在病灶边界模糊、前景极少的 NCR 区域仍能维持 0.787 的 Dice，展现出较强的小目标分割能力。
+尽管如此，模型仍在 BraTS 2020 上的训练曲线稳定收敛。面对多模 MRI 输入、三类结构区分与极端前景稀疏的情况，本文所采用的注意力增强 U-Net 架构依然在验证集上取得了 0.826 的平均 Dice系数、0.704 的 Jaccard，以及高达 0.987 的 Precision 和 0.986 的 Sensitivity。这些结果表明模型在三类前景之间均具有良好的识别能力，尤其在病灶边界模糊、前景极少的 NCR 区域仍能维持 0.787 的 Dice，展现出较强的小目标分割能力。
 
 
 不同文献中对 BraTS 2020数据集的语义分割任务的评估略有差异\cite{islam2020,wang2021,menze2015}，但已有多个基于标准 2D U-Net 架构的公开实现报告其整体 Dice 通常在 0.62–0.66 区间，本文在不引入深度融合、多分支设计或 3D 卷积的条件下，仅通过轻量注意力门与训练策略优化，即实现了明显的性能突破，体现了方法的良好的跨模态、跨器官和跨类别鲁棒性。
 
 \subsection{方法局限性讨论}
 
+虽然 AAH U-Net在皮肤、肝脏和脑肿瘤三条基准上都交出了不错的成绩，但它仍存在几处不可忽视的短板：网络采用 2D 切片处理流程，在 3D 结构连续性明显的 MRI 和 CT 任务中没有充分利用空间上下文的关系；几何增强与混合损失函数的权重系数仍靠经验网格搜索，不同数据集间迁移时需要重新调参。
+
+此外，针对类间极端不平衡、多语义标签的场景，模型的表开始暴露瓶颈，在背景像素占绝对主导时，网络更容易优先满足大类别的重叠度，导致小类别轮廓被过度平滑甚至完全忽略。综合来看，AAH-U-Net 仍缺乏对极端稀疏类别的专门关注机制及对标签层级结构的建模能力，这也是其在更复杂临床场景中需要优先解决的问题。
