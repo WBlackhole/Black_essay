@@ -10,12 +10,31 @@
 
 针对医学图像分割任务中常见目标结构复杂且样本规模有限的场景，AAH U-Net模型使用了数据增强策略，通过对图像引入翻转、随机旋转等几何变换，增强模型对空间变换的鲁棒性和小样本学习能力。
 
-凭借注意力门机制、数据增强和混合损失函数策略，AAH U-Net实现在皮肤癌镜像数据集、肝癌CT数据集和脑部肿瘤MRI数据集上语义分割性能的大幅提升。相较于原U-Net网络，AAH U-Net在皮肤癌镜像数据集上的验证集Dice系数从0.75提升至0.83，相对提升约11\%，同时在肝癌CT数据集和脑部肿瘤MRI上的验证集Dice系数分别为0.89和0.83，均大幅优于U-Net模型。
+凭借注意力门机制、数据增强和混合损失函数策略，AAH U-Net实现了在皮肤癌镜像数据集、肝癌CT数据集和脑部肿瘤MRI数据集上语义分割性能的大幅提升。相较于原U-Net网络，AAH U-Net在皮肤癌镜像数据集上的验证集Dice系数从0.75提升至0.83，相对提升约11\%，同时在肝癌CT数据集和脑部肿瘤MRI上的验证集Dice系数分别为0.89和0.83，均大幅优于U-Net模型。
 
 所有代码和训练好的AAH U-Net模型已开源至github：\url{https://github.com/WBlackhole/Black_essay}。
 
-
+{\zihao{4} \heiti 关键词：} \zihao{-4}U-Net\quad 医学图像语义分割\quad 注意力机制\quad 卷积神经网络\quad AAH U-Net
 
 \vskip0.5cm
 
 \addcontentsline{toc}{section}{摘要}
+
+\clearpage
+\section*{\zihao{-2} \centering \textbf{Abstract} }
+
+This paper proposes an improved U-Net model, AAH U-Net, based on attention mechanisms. By embedding attention gates into the network and employing strategies such as data augmentation and hybrid loss functions, AAH U-Net achieves enhanced semantic segmentation performance across multiple medical image datasets.
+
+To address the issue that skip connections in the original U-Net architecture tend to pass a large amount of background noise from the encoder to the decoder, this paper introduces an improved skip connection design. Attention gate modules are embedded within the skip paths to dynamically filter and weight feature maps, thereby enhancing the extraction of meaningful features from the encoder and improving the model's ability to localize target regions.
+
+To tackle the difficulty of single loss functions in handling class imbalance and blurry boundaries common in medical images, AAH U-Net adopts a hybrid loss strategy. By combining the Dice loss and cross-entropy loss in a weighted manner, the model simultaneously improves foreground overlap accuracy and pixel-wise classification performance, leading to better segmentation results and training stability.
+
+Considering the complex anatomical structures and limited sample sizes often encountered in medical image segmentation tasks, the AAH U-Net model incorporates data augmentation techniques such as flipping and random rotation. This enhances the model’s robustness to spatial transformations and improves its few-shot learning capability.
+
+With the combined benefits of attention gates, data augmentation, and hybrid loss strategies, AAH U-Net achieves significant improvements in semantic segmentation performance on skin cancer dermoscopy datasets, liver cancer CT datasets, and brain tumor MRI datasets. Compared to the original U-Net, the Dice coefficient on the skin cancer dataset increased from 0.75 to 0.83 (a relative improvement of approximately 11\%), while the validation Dice scores on the liver CT and brain MRI datasets reached 0.89 and 0.83, respectively—both substantially outperforming the baseline.
+
+All source code and pretrained models of AAH U-Net are publicly available at GitHub: \url{https://github.com/WBlackhole/Black_essay}.
+
+\textbf{\zihao{4} Key Words:} U-Net\quad Medical Image Segmentation\quad Attention Mechanism\quad Convolutional Neural Network\quad AAH U-Net
+
+\addcontentsline{toc}{section}{Abstract}
