@@ -75,6 +75,10 @@
 \setfnsymbol{circled}                 % 让脚注默认使用带圈数字
 \usepackage{wasysym}                  % 提供额外的符号（例如圆圈符号、勾号等）
 
+-% 设置公式、表格和图形的编号规则，使其包含章节号
+-\numberwithin{equation}{section}  % 使公式编号以章节号为前缀
+-\numberwithin{table}{section}     % 使表格编号以章节号为前缀
+-\numberwithin{figure}{section}    % 使图形编号以章节号为前缀
 \renewcommand{\theequation}{\thesection-\arabic{equation}} % 将公式编号前缀改为“1-1”
 \renewcommand{\thetable}{\thesection-\arabic{table}}       % 将表格编号前缀改为“1-1”
 \renewcommand{\thefigure}{\thesection-\arabic{figure}}     % 将图形编号前缀改为“1-1”
@@ -170,6 +174,7 @@
 
 %============= 参考文献及附录 ===============
 \include{body/reference.tex}
+{\zihao{5} \songti \bibliography{bibfile}}     % 设置参考文献的字体为宋体小五号，引用bibfile文件中的文献
 
 %=============  致谢  ======================
 \include{body/acknowledge.tex}
