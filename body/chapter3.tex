@@ -80,25 +80,9 @@ BraTS 2020数据集的主要挑战包括：（1）肿瘤组织的高度异质性
     \label{fig:unet_ushape}
 \end{figure}
 
-\subsubsection{损失函数的设计}
+\subsubsection{损失函数}
 
-在损失函数的设计上，本文采用Dice和Cross-Entropy的混合损失函数，即以相等权重线性叠加Dice损失与像素级交叉熵（CE）损失，以充分兼顾类别不平衡下的区域重叠度优化与梯度稳定性。设网络输出的类别概率图（像素总数为$N$）为：$ P=\left\{p_{i}\right\}_{i=1}^{N} $，真实分割掩膜为$ G=\left\{g_{i}\right\}_{i=1}^{N} $，其中$ p_{i} \in[0,1], g_{i} \in\{0,1\}$分别是像素$i$的前景概率和真实标签。则：
-
-\begin{equation}
-    \mathcal{L}_{\text {Dice }}=1-\frac{2 \sum_{i=1}^{N} p_{i} g_{i}}{\sum_{i=1}^{N} p_{i}+\sum_{i=1}^{N} g_{i}+\varepsilon}
-\end{equation}
-
-\begin{equation}
-    \mathcal{L}_{\mathrm{CE}}=-\frac{1}{N} \sum_{i=1}^{N}\left[g_{i} \ln \left(p_{i}\right)+\left(1-g_{i}\right) \ln \left(1-p_{i}\right)\right]
-\end{equation}
-
-\begin{equation}
-    \mathcal{L}_{\text {mix }}=0.5 \mathcal{L}_{\text {Dice }}+0.5 \mathcal{L}_{\mathrm{CE}}
-\end{equation}
-
-其中$ \varepsilon=10^{-6} $用于数值平滑以防零分母。Dice项直接对预测与标注的重叠区域进行归一化度量，能在小体积病灶场景下显著提升召回；交叉熵项则提供像素级对数似然的密集监督，改善早期训练阶段梯度稀疏、收敛震荡等问题。
-
-\subsubsection{优化器的选择}
+\subsubsection{优化器}
 
 本研究采用Adam优化器作为所有模型训练时的优化器。Adam优化器（Adaptive Moment Estimation）作为一种结合动量梯度下降与RMSprop优点的自适应学习率算法，在医学图像分割任务中展现出显著优势。其核心机制通过动态维护一阶矩估计（动量项）和二阶矩估计（自适应项）实现参数学习率的差异化调整，一阶矩平滑历史梯度方向以加速收敛：
 
