@@ -224,14 +224,16 @@
     \label{fig:all_in_is_art}
 \end{figure}
 
-图~\ref{fig:box_img}是消融实验中7个模型在验证集上的Dice系数分布箱式图。从图中我们可以直观看到，与其他模式的箱体相比，AAH U-Net的箱体位置最高（中位线约在0.81），且箱体高度极小（0.79\~0.83），表明AAH U-Net模型的分割性能最好，训练过程稳定、收敛快。同时，AAH U-Net的箱体上下须线也最短，只有零散的离群点为初始阶段训练不稳定的结果，表明模型整个训练周期性能非常集中，没有严重震荡。反观Augment U-Net和两个采用单一损失函数的U-Net模型，箱体高度明显更高，且下须更低，表明这些模型训练过程中的波动比较大，收敛过程更慢。而通过与Attention U-Net模型的箱体对比发现，Attention U-Net的箱体高度略高于AAH U-Net，箱体位置略低于AAH U-Net，说明采用数据增强策略和混合损失函数提高了模型的鲁棒性和分割性能。
+图~\ref{fig:box_img}是消融实验中7个模型在验证集上的Dice系数分布箱式图。从图中我们可以直观看到，与其他模式的箱体相比，AAH U-Net的箱体位置最高（中位线约在0.81），且箱体高度极小（0.79\textasciitilde0.83），表明AAH U-Net模型的分割性能最好，训练过程稳定、收敛快。同时，AAH U-Net的箱体上下须线也最短，只有零散的离群点为初始阶段训练不稳定的结果，表明模型整个训练周期性能非常集中，没有严重震荡。
 
-\begin{figure}
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\textwidth]{fig/box_plot@2x.png}
+    \includegraphics[width=0.8\textwidth]{fig/box_plot@2x.png}
     \caption{各消融模型训练Dice系数分布箱式图}
     \label{fig:box_img}
 \end{figure}
+
+反观Augment U-Net和两个采用单一损失函数的U-Net模型，箱体高度明显更高，且下须更低，表明这些模型训练过程中的波动比较大，收敛过程更慢。而通过与Attention U-Net模型的箱体对比发现，Attention U-Net的箱体高度略高于AAH U-Net，箱体位置略低于AAH U-Net，说明采用数据增强策略和混合损失函数提高了模型的鲁棒性和分割性能。
 
 为了进一步展示消融实验和增广实验中不同模型的分割性能，在ISIC 2018的测试集中随机抽取了两张数据展示模型分割结果，如图~\ref{fig:ablation_results}所示，其中绿色轮廓线为原数据的真实分割线，蓝色轮廓线为各模型的预测分割线。
 
